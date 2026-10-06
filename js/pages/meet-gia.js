@@ -50,8 +50,6 @@
   // caption windows: [fadeInStart, fadeInEnd, fadeOutStart, fadeOutEnd]
   const WINDOWS = [[-1, 0, 0.16, 0.22], [0.22, 0.27, 0.40, 0.46], [0.48, 0.53, 0.68, 0.74], [0.80, 0.86, 9, 10]];
 
-  document.getElementById('final-img').src = FRAMES[N - 1];
-
   function sizeCanvas() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const r = canvas.getBoundingClientRect();

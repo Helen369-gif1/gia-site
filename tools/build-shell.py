@@ -200,9 +200,8 @@ def footer(page):
     </div>
     <div class="footer__info">
       <p class="caption"><strong>Important information.</strong> {IMPORTANT}</p>
-      <p class="caption placeholder-note">Draft wording, to be confirmed by the product and legal teams.</p>
     </div>
-    <p class="caption mono footer__legal">© 2026 Glonari. Draft for content and design development.</p>
+    <p class="caption mono footer__legal">© 2026 Glonari.</p>
   </div>
 </footer>
 <!-- /shell:footer -->'''

@@ -432,8 +432,8 @@ The hero of pages 2–4 uses the id `intro`; the final CTA uses `final` (Meet Gi
 - Solid `--gp-black`, 1px `--gp-glass-border` top hairline, padding 72px top and 40px bottom (56/32px ≤768px).
 - Top row, a four-column grid (1.6fr + 3 × 1fr): the Glonari horizontal lockup (stacked at ≤768px) with one line "Gia is your personal AI agent by Glonari."; "The site" — the four pages, current page in gold; "Membership" — Join the waitlist, Learn about membership; "Legal" — Privacy, Terms. Column headings are 13px IBM Plex Sans 600, links 15px `--gp-text-2`, gold on hover.
 - Links without a confirmed destination are shown as muted text with a small italic note ("link to be confirmed", "page to come"), never as dead links. Replace them as destinations are confirmed.
-- Below a 1px `--gp-line` rule: the important-information paragraph (caption size, max 880px wide) built only from statements approved in the wireframes, with a note that the wording is a draft for product and legal review.
-- Last line: the copyright in IBM Plex Mono.
+- Below a 1px `--gp-line` rule: the important-information paragraph (caption size, max 880px wide) built only from statements approved in the wireframes.
+- Last line: «© 2026 Glonari.» in IBM Plex Mono.
 - At ≤960px the brand block spans the full width above three link columns; at ≤560px the links form two columns.
 
 ### 13.4 One source for the shell markup

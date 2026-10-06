@@ -89,7 +89,7 @@
 .uses li::before { content: ""; position: absolute; left: 0; top: .7em; width: 8px; height: 1px; background: var(--gp-gold-mid); }
 .uses b { color: var(--gp-text); font-weight: 600; }
 .final__media { margin: 0; }
-.final__img { aspect-ratio: 16 / 9; width: 100%; object-fit: cover; border-radius: 16px; border: 1px solid var(--gp-glass-border); background: var(--gp-surface-2); }
+.final__img { aspect-ratio: 16 / 9; width: 100%; height: auto; object-fit: cover; border-radius: 16px; border: 1px solid var(--gp-glass-border); background: var(--gp-surface-2); }
 .final__media figcaption { margin-top: 12px; }
 @media (max-width: 960px) { .final { grid-template-columns: minmax(0, 1fr); gap: 56px; } }
 
