@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Gia site — components</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Playfair+Display:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<link rel="icon" href="../assets/logo/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/components.css">
+<style>
+  /* Reference page only: labels each example with its component name. Not part of the site. */
+  .sg-head { padding: 48px 0 24px; border-bottom: 1px solid var(--gp-line); }
+  .sg-head h1 { margin: 0; font-size: 32px; font-weight: 700; }
+  .sg-head p { margin: 12px 0 0; color: var(--gp-text-2); max-width: 720px; }
+  .sg { padding-block: 72px; border-bottom: 1px solid var(--gp-line); }
+  .sg__name { margin: 0 0 8px; font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--gp-copper); }
+  .sg__use { margin: 0 0 40px; font-size: 14px; color: var(--gp-text-muted); max-width: 720px; }
+  .sg .page-hero { padding: 0; }
+  .sg .h2 { margin-bottom: 40px; }
+</style>
+</head>
+<body class="no-js">
+<main id="main">
+<div class="container sg-head">
+  <h1>Shared components</h1>
+  <p>Reference for stage 3: every shared component with real copy from the wireframes. Classes live in <code>css/components.css</code>, behavior in <code>js/components.js</code>, rules in <code>docs/GIA-SITE-DESIGN-SYSTEM.md</code> section 9. Status labels below are examples until the product team confirms them.</p>
+</div>
+
+<section class="sg" style="padding:0">
+  <div class="container" style="padding-block:48px 24px">
+    <p class="sg__name">.page-hero (text left) and .page-hero--center, with .principle</p>
+    <p class="sg__use">Hero of Introducing GLO, Global Connections and How GLO Works: the image or video fills the screen; the text sits on the left (darkened from the left) or in the center (evenly dimmed). On phones the text moves to the bottom over a stronger fade.</p>
+  </div>
+  <div class="page-hero" style="min-height:720px;padding-top:96px">
+    <div class="page-hero__media" style="--focus: 50% 45%"><img src="../assets/images/hero-glo-still.webp" width="1280" height="720" alt=""></div>
+    <div class="container"><div class="page-hero__text">
+      <p class="eyebrow">Introducing GLO™</p>
+      <h1 class="page-hero__title">Give Gia more capability.</h1>
+      <p class="lead">GLO gives Gia access to additional Glonari resources and capabilities so she can do more for you.</p>
+      <p class="principle">GLO provides the capacity. Gia puts it to work.</p>
+      <div class="btn-row btn-row--stack"><a class="btn btn--primary" href="#hub">See what GLO adds</a><a class="btn btn--secondary" href="#steps">Explore Global Connections</a></div>
+    </div></div>
+  </div>
+  <div class="page-hero page-hero--center" style="min-height:720px;padding-top:96px">
+    <div class="page-hero__media" style="--focus: 50% 40%"><img src="../assets/images/hero-gc-temp.webp" width="1672" height="941" alt=""></div>
+    <div class="container"><div class="page-hero__text">
+      <p class="eyebrow">Global Connections®</p>
+      <h2 class="page-hero__title">The work moves. Your GLO doesn’t.</h2>
+      <p class="lead">Gia can help you find qualifying work, review the terms and complete authorized projects using your available GLO capacity.</p>
+      <div class="btn-row btn-row--stack"><a class="btn btn--primary" href="#steps">See how a project works</a><a class="btn btn--secondary" href="#steps">Review an example project</a></div>
+    </div></div>
+  </div>
+</section>
+
+<section class="sg section--deep">
+  <div class="container">
+    <p class="sg__name">.badge</p>
+    <p class="sg__use">Capability status on every page, plus a plain label for "Illustrative".</p>
+    <div class="btn-row" style="gap:12px">
+      <span class="badge badge--now">Available now</span><span class="badge badge--approval">With approval</span><span class="badge badge--next">Coming next</span><span class="badge badge--vision">Vision</span><span class="badge badge--plain">Illustrative</span>
+    </div>
+  </div>
+</section>
+
+<section class="sg" id="hub">
+  <div class="container">
+    <p class="sg__name">.hub</p>
+    <p class="sg__use">Introducing GLO, section 02. Every node is a real resource category; Gia is the center that decides how to use them.</p>
+    <h2 class="h2">AI is powerful. More demanding work requires more resources.</h2>
+    <div class="hub">
+      <ul class="hub__side hub__side--left">
+        <li class="hub__node"><span class="hub__name">Compute</span><span class="hub__desc">Processing capacity for more sophisticated tasks.</span></li>
+        <li class="hub__node"><span class="hub__name">Models</span><span class="hub__desc">AI selected for different kinds of work.</span></li>
+        <li class="hub__node"><span class="hub__name">Tools</span><span class="hub__desc">Specialized software, services and capabilities.</span></li>
+      </ul>
+      <div class="hub__core"><span class="hub__core-name">Gia</span><span class="hub__core-sub">decides how to use them</span></div>
+      <ul class="hub__side hub__side--right">
+        <li class="hub__node"><span class="hub__name">Agents</span><span class="hub__desc">Additional AI resources for coordinated work.</span></li>
+        <li class="hub__node"><span class="hub__name">Research</span><span class="hub__desc">Gathering, organizing and analyzing information.</span></li>
+        <li class="hub__node"><span class="hub__name">Execution</span><span class="hub__desc">Moving authorized work toward completion.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sg section--deep">
+  <div class="container">
+    <p class="sg__name">.flow with .is-key + .principle--center</p>
+    <p class="sg__use">Introducing GLO, section 03. Gia's node is larger than GLO's.</p>
+    <h2 class="h2">GLO is access to more resources — not a second AI.</h2>
+    <ol class="flow">
+      <li class="flow__node"><span class="flow__title">You</span><span class="flow__sub">set the goal</span></li>
+      <li class="flow__node"><span class="flow__title">GLO</span><span class="flow__sub">makes capacity available</span></li>
+      <li class="flow__node is-key"><span class="flow__title">Gia</span><span class="flow__sub">plans, selects resources, coordinates</span></li>
+      <li class="flow__node is-end"><span class="flow__title">Result</span><span class="flow__sub">a useful outcome, for your review</span></li>
+    </ol>
+    <p class="principle principle--center" style="margin-top:48px">GLO isn’t the intelligence. Gia is.</p>
+  </div>
+</section>
+
+<section class="sg">
+  <div class="container">
+    <p class="sg__name">.cards.cards--4 + .card--flex + .card__head + .card__example</p>
+    <p class="sg__use">Introducing GLO, section 04. One concrete example and a status on each card; no compensation figures.</p>
+    <div class="cards cards--4">
+      <article class="card card--flex"><div class="card__head"><h3 class="h4">Personal capability</h3><span class="badge badge--next">Coming next</span></div><p class="small">Gia can take on more of the work around a goal.</p><p class="card__example"><b>Example</b>Research three markets and prepare a briefing.</p></article>
+      <article class="card card--flex"><div class="card__head"><h3 class="h4">Economic utility</h3><span class="badge badge--vision">Vision</span></div><p class="small">Where qualifying programs apply, Gia may help save money and identify opportunities.</p><p class="card__example"><b>Example</b>Compare service plans and flag a cheaper option.</p></article>
+      <article class="card card--flex"><div class="card__head"><h3 class="h4">Glonari experiences</h3><span class="badge badge--next">Coming next</span></div><p class="small">Other Glonari services brought into a task when relevant and permitted.</p><p class="card__example"><b>Example</b>Explore homes and their monthly cost with Homes.</p></article>
+      <article class="card card--flex card--key"><div class="card__head"><h3 class="h4">Global Connections®</h3><span class="badge badge--next">Coming next</span></div><p class="small">Gia can identify, explain and track qualifying work opportunities. You decide.</p><a class="card__link" href="#steps">Learn more</a></article>
+    </div>
+  </div>
+</section>
+
+<section class="sg section--deep" id="steps">
+  <div class="container">
+    <p class="sg__name">.steps-line (.is-you marks the member's steps)</p>
+    <p class="sg__use">Introducing GLO, section 07: a five-step preview.</p>
+    <h2 class="h2">The work moves. The GLO doesn’t.</h2>
+    <ol class="steps-line">
+      <li class="steps-line__item"><span class="steps-line__label">Gia identifies a qualifying project</span><span class="steps-line__who">Gia</span></li>
+      <li class="steps-line__item is-you"><span class="steps-line__label">You review the terms</span><span class="steps-line__who">You</span></li>
+      <li class="steps-line__item is-you"><span class="steps-line__label">You choose whether to participate</span><span class="steps-line__who">You</span></li>
+      <li class="steps-line__item is-you"><span class="steps-line__label">You authorize Gia</span><span class="steps-line__who">You</span></li>
+      <li class="steps-line__item"><span class="steps-line__label">Gia performs and tracks the work</span><span class="steps-line__who">Gia</span></li>
+    </ol>
+  </div>
+</section>
+
+<section class="sg">
+  <div class="container">
+    <p class="sg__name">.flow + .flow-keep</p>
+    <p class="sg__use">Global Connections, section 06. The ownership bar stays pinned under the whole sequence.</p>
+    <h2 class="h2">Useful work is the outcome.</h2>
+    <ol class="flow">
+      <li class="flow__node"><span class="flow__title">Member A</span><span class="flow__sub">requests the work</span></li>
+      <li class="flow__node"><span class="flow__title">Member B</span><span class="flow__sub">authorizes their Gia</span></li>
+      <li class="flow__node"><span class="flow__title">B’s GLO</span><span class="flow__sub">capacity supports the work</span></li>
+      <li class="flow__node is-key"><span class="flow__title">Gia</span><span class="flow__sub">performs the project</span></li>
+      <li class="flow__node"><span class="flow__title">Deliverable</span><span class="flow__sub">returns to Member A</span></li>
+      <li class="flow__node is-end"><span class="flow__title">Member A</span><span class="flow__sub">pays under the project terms</span></li>
+    </ol>
+    <p class="flow-keep">Member B keeps their GLO the whole time</p>
+  </div>
+</section>
+
+<section class="sg section--deep">
+  <div class="container">
+    <p class="sg__name">.flow + .flow-return (cycle) + .flow-keep</p>
+    <p class="sg__use">How GLO Works, section 03. Set --n to the number of nodes. No amounts in the cycle.</p>
+    <h2 class="h2">The project can end without the GLO ending.</h2>
+    <ol class="flow" style="--n:5">
+      <li class="flow__node is-end"><span class="flow__title">Available</span></li>
+      <li class="flow__node"><span class="flow__title">Assigned to a project</span></li>
+      <li class="flow__node"><span class="flow__title">Work in progress</span></li>
+      <li class="flow__node"><span class="flow__title">Project complete</span></li>
+      <li class="flow__node is-end"><span class="flow__title">Available again</span></li>
+    </ol>
+    <div class="flow-return" style="--n:5"><span class="flow-return__label">Capacity may become available again</span></div>
+    <p class="flow-keep" style="margin-top:32px">You hold your GLO the whole time</p>
+  </div>
+</section>
+
+<section class="sg">
+  <div class="container" style="max-width:960px">
+    <p class="sg__name">.accordion + details.acc (name="glo-options")</p>
+    <p class="sg__use">Introducing GLO, section 06. Opening one option closes the others; Use is open by default.</p>
+    <h2 class="h2">Capacity can be used in different qualifying ways.</h2>
+    <div class="accordion">
+      <details class="acc" name="glo-options" open><summary class="acc__sum">Use<span class="acc__icon" aria-hidden="true"></span></summary><div class="acc__body"><p class="small">Make qualifying GLO capacity available to your Gia for your own needs.</p><p class="owner owner--keep">You keep your GLO</p></div></details>
+      <details class="acc" name="glo-options"><summary class="acc__sum">Put it to work<span class="acc__icon" aria-hidden="true"></span></summary><div class="acc__body"><p class="small">Authorize your Gia to perform a qualifying Global Connections project. The work moves; you retain the GLO.</p><p class="owner owner--keep">You keep your GLO</p></div></details>
+      <details class="acc" name="glo-options"><summary class="acc__sum">Support <span class="badge badge--next">Coming next</span><span class="acc__icon" aria-hidden="true"></span></summary><div class="acc__body"><p class="small">Where program terms permit, qualifying GLO may support another member’s qualifying access or experience.</p><p class="owner owner--terms">Defined by program terms</p></div></details>
+      <details class="acc" name="glo-options"><summary class="acc__sum">Transfer<span class="acc__icon" aria-hidden="true"></span></summary><div class="acc__body"><p class="small">Where available, qualifying GLO may be independently transferred through decentralized secondary markets.</p><p class="owner owner--change">Ownership changes when the GLO transfers</p></div></details>
+    </div>
+  </div>
+</section>
+
+<section class="sg section--deep">
+  <div class="container">
+    <p class="sg__name">.options + article.option + .owner</p>
+    <p class="sg__use">How GLO Works, section 04. Same names and order as the accordion. Details open on demand.</p>
+    <h2 class="h2">Different needs. Same GLO.</h2>
+    <div class="options">
+      <article class="option"><div class="option__head"><h3 class="option__name">Use</h3></div><p class="small">Make qualifying capacity available to Gia for your own personal or economic needs.</p>
+        <details class="option__more"><summary>Details</summary><dl><dt>Ownership</dt><dd>You keep your GLO.</dd><dt>Value</dt><dd>You receive the result of Gia’s work.</dd></dl></details>
+        <p class="owner owner--keep">GLO stays with you</p></article>
+      <article class="option"><div class="option__head"><h3 class="option__name">Put it to work</h3></div><p class="small">Authorize Gia to perform qualifying work another member needs completed through Global Connections.</p>
+        <details class="option__more"><summary>Details</summary><dl><dt>Ownership</dt><dd>You keep your GLO.</dd><dt>Value</dt><dd>The requester receives the deliverable and pays for the work; you receive project compensation under its terms.</dd></dl></details>
+        <p class="owner owner--keep">GLO stays with you</p></article>
+      <article class="option option--conditional"><div class="option__head"><h3 class="option__name">Support</h3><span class="badge badge--next">Coming next</span></div><p class="small">Where program terms permit, qualifying GLO may support another member’s qualifying access or experience.</p>
+        <details class="option__more"><summary>Details</summary><dl><dt>Ownership and value</dt><dd>Defined by the applicable program terms.</dd></dl></details>
+        <p class="owner owner--terms">Defined by terms</p></article>
+      <article class="option"><div class="option__head"><h3 class="option__name">Transfer</h3></div><p class="small">Where available, GLO itself may be independently transferred through decentralized secondary markets.</p>
+        <details class="option__more"><summary>Details</summary><dl><dt>Ownership</dt><dd>Changes when the GLO transfers.</dd><dt>Value</dt><dd>Market participants determine the price.</dd></dl></details>
+        <p class="owner owner--change">GLO gets a new owner</p></article>
+    </div>
+    <p class="caption" style="margin-top:24px;text-align:center">After a project, capacity may become available again.</p>
+  </div>
+</section>
+
+<section class="sg">
+  <div class="container">
+    <p class="sg__name">.terms (inside .glass) and .approval with an activity log</p>
+    <p class="sg__use">Global Connections, sections 04 and 07. Authorization refuses while a term is unreviewed, then asks for an explicit confirmation and writes to the activity history. One total per project, labeled Illustrative.</p>
+    <div class="split" style="align-items:start">
+      <div class="glass terms">
+        <div class="terms__head"><p class="terms__title">Business-intelligence project</p><span class="badge badge--plain">Illustrative</span></div>
+        <dl class="terms__list">
+          <div class="terms__row"><dt>Scope</dt><dd>Research three logistics markets and their main competitors.</dd></div>
+          <div class="terms__row"><dt>Deliverable</dt><dd>A sourced briefing and a six-slide presentation.</dd></div>
+          <div class="terms__row"><dt>Milestones</dt><dd>Source list, draft findings, final briefing. You review each.</dd></div>
+          <div class="terms__row"><dt>Duration</dt><dd>About three weeks</dd></div>
+          <div class="terms__row"><dt>Capacity</dt><dd>Qualifying GLO capacity as defined in the project terms</dd></div>
+          <div class="terms__row terms__row--total"><dt>Total for the project</dt><dd>To be set with the legal team</dd></div>
+        </dl>
+        <p class="caption terms__note">This is an illustration of project compensation — not income paid simply for holding GLO.</p>
+      </div>
+      <div style="display:grid;gap:24px">
+        <div class="glass approval is-active" data-approval data-log="#sg-log" data-subject="the business-intelligence project">
+          <p class="approval__title">Before Gia begins</p>
+          <ul class="approval__list">
+            <li class="approval__item"><label><input class="approval__check" type="checkbox" checked><span class="approval__label">Scope and deliverable</span></label><span data-state></span></li>
+            <li class="approval__item"><label><input class="approval__check" type="checkbox" checked><span class="approval__label">Required capacity</span></label><span data-state></span></li>
+            <li class="approval__item"><label><input class="approval__check" type="checkbox" checked><span class="approval__label">Duration and your review points</span></label><span data-state></span></li>
+            <li class="approval__item"><label><input class="approval__check" type="checkbox"><span class="approval__label">Compensation and early-termination terms</span></label><span data-state></span></li>
+          </ul>
+          <div class="approval__actions"><button class="btn btn--primary btn--sm" type="button" data-approval-authorize>Authorize Gia</button><button class="btn btn--ghost btn--sm" type="button" data-approval-decline>Not for me</button></div>
+          <div class="approval__confirm" hidden><p>Authorize Gia to start the business-intelligence project under these terms?</p><div class="btn-row" style="gap:8px"><button class="btn btn--primary btn--sm" type="button" data-approval-confirm>Confirm and authorize</button><button class="btn btn--ghost btn--sm" type="button" data-approval-back>Go back</button></div></div>
+          <p class="approval__msg" aria-live="polite"></p>
+          <button class="btn btn--ghost btn--sm" type="button" data-approval-reset hidden>Start over</button>
+        </div>
+        <div class="card"><h3 class="h4">Activity history</h3><ul class="log" id="sg-log"><li>Gia found a qualifying project<small>Today</small><span class="status status--working">Recommended</span></li></ul></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sg section--deep">
+  <div class="container">
+    <p class="sg__name">.isnot</p>
+    <p class="sg__use">Introducing GLO, section 08. Calm and scannable, not legal fine print.</p>
+    <h2 class="h2">More capability does not remove your control.</h2>
+    <div class="isnot">
+      <section class="isnot__col isnot__col--is"><h3 class="h4">What GLO is</h3><ul><li>Access and capacity that Gia can use under applicable terms.</li><li>Glonari’s Membership &amp; Access Token.</li><li>Labeled by status, so you can see what works today.</li></ul></section>
+      <section class="isnot__col isnot__col--not"><h3 class="h4">What GLO is not</h3><ul><li>Not the intelligence, and it does not perform the work by itself.</li><li>It does not pay income, interest or yield.</li><li>Transferability does not promise liquidity, resale or appreciation.</li></ul></section>
+    </div>
+  </div>
+</section>
+
+<section class="sg">
+  <div class="container" style="max-width:880px">
+    <p class="sg__name">.notice</p>
+    <p class="sg__use">How GLO Works, section 07.</p>
+    <aside class="notice" aria-labelledby="sg-notice"><h3 class="notice__title" id="sg-notice">Important information</h3>
+      <ul class="notice__list"><li>Examples are illustrative.</li><li>Compensation is earned through work under applicable project terms.</li><li>GLO itself does not pay income, interest or yield.</li><li>GLO does not guarantee appreciation, liquidity or resale.</li></ul>
+      <p class="caption">Capabilities are labeled by status: Available now, With approval, Coming next or Vision.</p></aside>
+  </div>
+</section>
+
+<section class="sg section--deep">
+  <div class="container final">
+    <div>
+      <p class="sg__name">.final + .final__h + .uses (shared with Meet Gia)</p>
+      <h2 class="final__h">Give Gia more to work with.</h2>
+      <ul class="uses"><li>More resources for complex research and analysis.</li><li>More tools and coordinated capabilities when a task requires them.</li><li>More capacity for longer or more demanding authorized work.</li></ul>
+      <div class="btn-row btn-row--stack" style="margin-top:40px"><a class="btn btn--primary" href="#main">See how Global Connections works</a><a class="btn btn--secondary" href="#main">Learn about membership</a></div>
+    </div>
+    <figure class="media-frame media-frame--placeholder" style="--ratio:16/9">
+      <div class="media-frame__box"><p class="media-frame__note"><b>Photo</b>Gia in a warm setting with a finished briefing beside her.</p></div>
+      <figcaption class="caption">Placeholder until the photo is supplied.</figcaption>
+    </figure>
+  </div>
+</section>
+</main>
+<script src="../js/site.js"></script>
+<script src="../js/components.js"></script>
+</body>
+</html>
