@@ -84,6 +84,12 @@ PAGES = [
 
 WAITLIST = "index.html#join"  # the waitlist form lives on Meet Gia
 
+# Footer links whose pages are not built yet. None hides the link; set the file name to show it.
+# A column with no links is left out. Privacy and Terms must exist before the waitlist form sends data.
+MEMBERSHIP_PAGE = None  # e.g. "membership.html"
+PRIVACY_PAGE = None
+TERMS_PAGE = None
+
 IMPORTANT = (
     "GLO&trade; is Glonari&rsquo;s Membership &amp; Access Token. Qualifying GLO can give Gia access to "
     "additional resources under applicable program terms. GLO itself does not pay income, interest or yield, "
@@ -157,6 +163,16 @@ def header(page):
 <!-- /shell:header -->'''
 
 
+def footer_col(head, items):
+    items = "\n          ".join(items)
+    return f'''      <div class="footer__col">
+        <p class="footer__head">{head}</p>
+        <ul>
+          {items}
+        </ul>
+      </div>'''
+
+
 def footer(page):
     here = page["file"]
     on_home = here == "index.html"
@@ -164,10 +180,18 @@ def footer(page):
     logo_label = "Glonari, back to top" if on_home else "Glonari, Meet Gia"
     cta = "#join" if on_home else WAITLIST
     pages = "\n          ".join(f"<li>{a}</li>" for a in page_links(page, ""))
+    membership = [f'<li><a href="{cta}">Join the waitlist</a></li>']
+    if MEMBERSHIP_PAGE:
+        membership.append(f'<li><a href="{MEMBERSHIP_PAGE}">Learn about membership</a></li>')
+    legal = [f'<li><a href="{href}">{label}</a></li>'
+             for href, label in ((PRIVACY_PAGE, "Privacy"), (TERMS_PAGE, "Terms")) if href]
+    cols = [footer_col("Membership", membership)] + ([footer_col("Legal", legal)] if legal else [])
+    link_cols = 1 + len(cols)  # "The site" plus the columns above
+    cols = "\n".join(cols)
     return f'''<!-- shell:footer -->
 <footer class="site-footer">
   <div class="container">
-    <div class="footer__top">
+    <div class="footer__top" style="--footer-cols: {link_cols}">
       <div class="footer__brand">
         <a class="footer-logo" href="{logo_href}" aria-label="{logo_label}">
           <picture>
@@ -183,20 +207,7 @@ def footer(page):
           {pages}
         </ul>
       </nav>
-      <div class="footer__col">
-        <p class="footer__head">Membership</p>
-        <ul>
-          <li><a href="{cta}">Join the waitlist</a></li>
-          <li><span class="footer__todo">Learn about membership <span class="footer__tbc">link to be confirmed</span></span></li>
-        </ul>
-      </div>
-      <div class="footer__col">
-        <p class="footer__head">Legal</p>
-        <ul>
-          <li><span class="footer__todo">Privacy <span class="footer__tbc">page to come</span></span></li>
-          <li><span class="footer__todo">Terms <span class="footer__tbc">page to come</span></span></li>
-        </ul>
-      </div>
+{cols}
     </div>
     <div class="footer__info">
       <p class="caption"><strong>Important information.</strong> {IMPORTANT}</p>

@@ -53,6 +53,8 @@ Introducing GLO also links straight to How GLO Works from its options section, a
     docs/                      design system, color system, wireframes
     docs/components.html       live reference of every shared component (open via the local server)
     tools/build-shell.py       writes the shared header, mobile menu and footer into all four pages
+    tools/optimize-images.py   every new photo goes through it: moves the original to assets/source/, makes WebP + JPEG
+                               versions (about 800 and 1600px, never upscaled) in assets/images/
 
 Every page loads tokens, base, components, shell and its own page CSS, then js/site.js and its own page script.
 
@@ -65,6 +67,19 @@ Do not edit it by hand: change `tools/build-shell.py` (pages, section lists, foo
 
 Header: level 1 lists the four pages, level 2 lists the sections of the current page, with a scroll-progress bar.
 At 1100px and below both collapse into the menu button.
+
+## Photos
+
+Rule: every new photo goes through `tools/optimize-images.py` (needs ffmpeg and ffprobe). Put the original
+(PNG, JPEG, ...) into assets/images/ and run
+
+    python3 tools/optimize-images.py            # every new photo in assets/images/
+    python3 tools/optimize-images.py <file>     # one file; --name <base> sets the output name
+
+It moves the original to assets/source/ (never overwrites an original already there), writes
+`<name>-800` and `<name>-1600` (or the real size if smaller) as WebP (quality 78) and JPEG (-q:v 4), and prints the
+srcset and width/height to use in the page. Photos already processed are skipped (`--force` rebuilds their versions).
+`--check` rebuilds everything in a temp folder and compares it with assets/images/ without writing.
 
 ## Notes
 
@@ -79,9 +94,19 @@ At 1100px and below both collapse into the menu button.
   To replace it: `ffmpeg -i new.mp4 -an -c:v libx264 -crf 23 -pix_fmt yuv420p -movflags +faststart assets/video/works-with-you.mp4`
   and re-export the first and last frames as WebP.
 - Reduced motion: the hero shows its final frame immediately; section 03 shows the video's last frame as a still.
-- The waitlist form does not send data yet.
-- Footer placeholders: "Learn about membership", Privacy and Terms have no destination yet; the important-information wording is a draft for product and legal review.
-- Placeholders, Meet Gia: final CTA image (temporary frame from the hero video), privacy/storage FAQ answer.
+- The waitlist form does not send data yet. Launch condition: the Privacy and Terms pages must exist BEFORE the form starts
+  sending data.
+- Hidden until their pages exist (no service notes are shown on the site):
+  "Learn about membership" buttons on Introducing GLO, Global Connections and How GLO Works (`hidden` attribute on the
+  link, which already points to membership.html: remove `hidden` to show it; check the file name when the page is built);
+  footer links Learn about membership, Privacy and Terms (set MEMBERSHIP_PAGE, PRIVACY_PAGE, TERMS_PAGE in
+  tools/build-shell.py and run it; a footer column with no links is left out).
+- The important-information wording in the footer is a draft for product and legal review.
+- Placeholders, Meet Gia: final CTA image (temporary frame from the hero video). The FAQ question "Where is my data stored,
+  and how do I delete it?" is hidden (`hidden` on its `details` in index.html) and waits for the answer from the product
+  and legal teams: write the answer and remove `hidden`.
+- Final photos (originals in assets/source/, optimized WebP + JPEG fallback in two sizes in assets/images/):
+  Global Connections: gc-hero-workspace-800/-1600; How GLO Works: hgw-choice-panel-800 (600x800) / -1448 (full size).
 - Hero of pages 2-4: full-screen media with the text on the side.
   Introducing GLO: assets/video/hero-glo.mp4 (8 s, no audio; original in assets/source/hero-glo-original.mp4),
   text on the right. Hero videos play once each time the hero comes into view (after 0.8 s), no loop;
@@ -90,14 +115,14 @@ At 1100px and below both collapse into the menu button.
   The "$48 per GLO" figure on the monitor in the photo is blurred: the content rules forbid a rate per GLO.
   The final image must not show compensation figures.
   How GLO Works: animated systems diagram (inline SVG) on the right, text on the left; it builds once per visit.
-- Placeholders, How GLO Works: final photo (member and Gia reviewing the four options), "Learn about membership"
-  destination, option status labels (drafts).
-- Placeholders, Global Connections: hero loop (temporary image), final CTA photo, the illustrative project total
-  (to be set with the legal team), "Learn about membership" destination, status label (Coming next, draft).
+- Placeholders, How GLO Works: "Learn about membership" destination, option status labels (drafts).
+- Placeholders, Global Connections: the hero image is temporary (no tag on the page any more), the illustrative project total
+  (the terms card says "Defined in the project terms" until a value is set with the legal team), "Learn about membership"
+  destination, status label (Coming next, draft).
   The example project (logistics market briefing) is invented for illustration and used consistently in sections 02-08.
 - Placeholders, Introducing GLO: final CTA photo,
   "Learn about membership" destination, capability status labels (drafts, conservative), example values in the workspace.
 - Pulse diagrams (Introducing GLO 02 hub, How GLO Works 06 ecosystem): Gia's photo in the center, wiring drawn in one SVG
   from the measured cards, pulses and card status driven by js/components.js. The cycle plays 3 times when the diagram
   comes into view, then rests on the final state; mouse hover plays it once more; it pauses off screen and in a hidden tab.
-  Rules: docs/GIA-SITE-DESIGN-SYSTEM.md, section 8.6. reference/ holds design references only and is not part of the site.
+  Rules: docs/GIA-SITE-DESIGN-SYSTEM.md, section 8.6. reference/ holds design references only, is not part of the site and is ignored by git (.gitignore).

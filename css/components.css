@@ -71,7 +71,6 @@
 @media (max-width: 960px) { .ws { grid-template-columns: minmax(0, 1fr); } .ws__pane + .ws__pane { border-left: 0; border-top: 1px solid var(--gp-glass-border); } }
 @media (max-width: 600px) { .ws__cols { grid-template-columns: minmax(0, 1fr); } .ws__pane { padding: 22px; } }
 
-.placeholder-note { color: var(--gp-text-muted); font-style: italic; }
 
 /* ===== Tabs (Meet Gia "In action", Global Connections workspace) ===== */
 .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 40px; }
@@ -158,7 +157,8 @@
 /* ===== Media frame (video, photo or a placeholder that keeps the layout) ===== */
 .media-frame { margin: 0; }
 .media-frame__box { position: relative; aspect-ratio: var(--ratio, 16 / 10); border-radius: 16px; border: 1px solid var(--gp-glass-border); overflow: hidden; background: var(--gp-surface-2); }
-.media-frame__box > img, .media-frame__box > video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.media-frame__box > img, .media-frame__box > video, .media-frame__box > picture > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.media-frame__box > picture { display: contents; }
 .media-frame figcaption { margin-top: 12px; }
 .media-frame--placeholder .media-frame__box {
   display: grid; place-items: center; padding: 24px; text-align: center;
@@ -167,8 +167,6 @@
 .media-frame__note { font-family: var(--font-mono); font-size: 12px; line-height: 1.5; color: var(--gp-text-muted); max-width: 34ch; }
 .media-frame__note b { display: block; font-weight: 600; color: var(--gp-copper); margin-bottom: 4px; }
 
-/* Pending action: a button whose destination is not confirmed yet. Visibly inactive, not focusable. */
-.btn--pending { border-style: dashed; border-color: var(--gp-line); color: var(--gp-text-muted); background: transparent; cursor: default; box-shadow: none; }
 
 /* ===== Badge: capability status and other short labels ===== */
 .badge {

@@ -198,7 +198,7 @@ Approved direction (replaces the half-text, half-media split in the wireframe dr
 - Title: Playfair Display 600, `clamp(40px, 5.4vw, 76px)`, line height 1.04, champagne; lead in `--gp-text` for contrast over the image; a soft text shadow helps over busy areas.
 - Hero video plays once per visit to the screen (see `video[data-play-once]` in 9.2), never in a loop. Reduced motion: it does not play and the last frame is shown as the complete composition.
 - Primary button scrolls to the next section on the page or opens the next page in the sequence, as the wireframe specifies.
-- Until real hero media is supplied, pages use clearly tagged temporary images from `assets/images/` (never images with financial charts, percentages or gains), or the dark placeholder `.page-hero__media--placeholder`.
+- Until real hero media is supplied, pages use temporary images from `assets/images/` (never images with financial charts, percentages or gains), or the dark placeholder `.page-hero__media--placeholder`. Temporary media is recorded in README.md, not tagged on the page.
 
 ### 7.2 Centered header plus content
 
@@ -268,7 +268,9 @@ Every option (Use, Put it to work, Support, Transfer) carries a status badge on 
 - Every image and video has an explicit `aspect-ratio` and `width`/`height` attributes.
 - Photography and video use `object-fit: cover`, radius 8px (cards) or 16px (feature media), 1px border.
 - Decorative media gets `aria-hidden="true"` or empty `alt`; informative images get a real description.
-- Missing media keeps the layout: use a placeholder frame with a caption that says what will go there.
+- Missing media keeps the layout: use a placeholder frame (`.media-frame--placeholder`) whose note says what will go there; no extra caption under it.
+- Photos in a media frame use `<picture>`: a WebP `source` and a JPEG (or PNG) fallback `img`, each with a `srcset` of two sizes (about 800px and 1600px on the longer side, or the original if smaller) and `sizes` matching the column, plus `width`/`height`. The image fills the frame with `object-fit: cover`; set `object-position` per photo when the crop must keep a subject in frame. Media near the top of the page: `fetchpriority="high"`, no lazy loading; otherwise `loading="lazy"`. The versions are made with `tools/optimize-images.py`.
+- Every new photo goes through `tools/optimize-images.py`, never by hand: drop the original into `assets/images/` and run `python3 tools/optimize-images.py`. It moves the original to `assets/source/` (an existing original is never overwritten) and writes `<name>-800` and `<name>-1600` (the real size if smaller, never upscaled) as WebP (quality 78) and JPEG fallback (`-q:v 4`). Already processed photos are skipped. Do not change these quality settings per photo.
 - Optimized files are WebP in `assets/images/` or `assets/video/`; originals stay in `assets/source/`.
 
 ### 8.6 Diagrams
@@ -323,7 +325,6 @@ Live examples with real wireframe copy: `docs/components.html` (open it through 
 | Gia core | `.gia-core`, `__photo`, `__plate`, `__name`, `__sub` (`__glow` added by script) | GLO 02, How GLO Works 06 | photo of Gia in a gold ring; name plate over the lower edge; section 8.6 |
 | Pulse diagram | `[data-pulse="<name>"]`, `.is-final`; script adds `.pulse-wires`, `.pulse-status`, `.pulse-hl` | GLO 02 (`hub`), How GLO Works 06 (`eco`) | wiring, pulses and card status from `js/components.js`; routes and scenario per diagram via `GiaPulse.define()` (hub in `js/components.js`, eco in the page script); playback rule in section 8.6 |
 | Ambient motion | `[data-motion]` → `.is-playing` | available for diagrams with slow motion (How GLO Works hero) | CSS animations inside run only while in view and never under reduced motion |
-| Pending button | `.btn--pending` (`span`, `aria-disabled="true"`) | "Learn about membership" | dashed, muted, not focusable; paired with a note saying the destination is to be confirmed |
 | Badge | `.badge--now`, `--approval`, `--next`, `--vision`, `--plain` | everywhere a capability or option has a status | Available now / With approval / Coming next / Vision; `--plain` for "Illustrative" |
 | Card grid | `.cards--2/3/4`, `.card--flex`, `.card__head`, `.card__example`, `.card__link`, `.card--key` | GLO 04 | badge sits above the title; titles stay aligned when only some cards have a badge |
 | Flow | `ol.flow > li.flow__node`, `__title`, `__sub`, `.is-key`, `.is-end`, `.flow--numbered` | GLO 03, GC 06, How GLO Works 03/05 | gold arrows; vertical at 768px; `.is-key` (Gia) is wider and gold |
@@ -445,11 +446,11 @@ The hero of pages 2–4 uses the id `intro`; the final CTA uses `final` (Meet Gi
 ### 13.3 Footer
 
 - Solid `--gp-black`, 1px `--gp-glass-border` top hairline, padding 72px top and 40px bottom (56/32px ≤768px).
-- Top row, a four-column grid (1.6fr + 3 × 1fr): the Glonari horizontal lockup (stacked at ≤768px) with one line "Gia is your personal AI agent by Glonari."; "The site" — the four pages, current page in gold; "Membership" — Join the waitlist, Learn about membership; "Legal" — Privacy, Terms. Column headings are 13px IBM Plex Sans 600, links 15px `--gp-text-2`, gold on hover.
-- Links without a confirmed destination are shown as muted text with a small italic note ("link to be confirmed", "page to come"), never as dead links. Replace them as destinations are confirmed.
+- Top row, a grid of the brand block (1.6fr) plus one 1fr column per link column (`--footer-cols`, set by the build script): the Glonari horizontal lockup (stacked at ≤768px) with one line "Gia is your personal AI agent by Glonari."; "The site" — the four pages, current page in gold; "Membership" — Join the waitlist, Learn about membership; "Legal" — Privacy, Terms. Column headings are 13px IBM Plex Sans 600, links 15px `--gp-text-2`, gold on hover.
+- Links whose page is not built yet are not shown (no dead links, no service notes): Learn about membership, Privacy and Terms are switched on in `tools/build-shell.py` (MEMBERSHIP_PAGE, PRIVACY_PAGE, TERMS_PAGE). A column with no links is left out. Privacy and Terms must exist before the waitlist form sends data.
 - Below a 1px `--gp-line` rule: the important-information paragraph (caption size, max 880px wide) built only from statements approved in the wireframes.
 - Last line: «© 2026 Glonari.» in IBM Plex Mono.
-- At ≤960px the brand block spans the full width above three link columns; at ≤560px the links form two columns.
+- At ≤960px the brand block spans the full width above the link columns; at ≤560px the links form two columns.
 
 ### 13.4 One source for the shell markup
 
@@ -492,7 +493,7 @@ Calls to action move the visitor forward: Meet Gia → Introducing GLO → Globa
 
 The shell navigation (header, mobile menu, footer) always lists all four pages. While a page is still being built it shows placeholder sections with their final ids and headings.
 
-Calls to action inside page content use their final destinations from the wireframe, even when the target page is still in progress during the draft; the target then shows its placeholder sections. Before launch every CTA target must be built. A destination that is not decided yet (for example "Learn about membership") is shown as `.btn--pending` with a short note, never as a link to `#` or to an unrelated page.
+Calls to action inside page content use their final destinations from the wireframe, even when the target page is still in progress during the draft; the target then shows its placeholder sections. Before launch every CTA target must be built. A destination that is not built yet (for example "Learn about membership") is hidden with the `hidden` attribute on the final link until the page exists, never shown as an inactive button, a link to `#` or a link to an unrelated page. The site shows no service notes for the team; open items are recorded in README.md.
 
 ## 15. Cross-page content rules
 
@@ -516,7 +517,7 @@ These come from the wireframes and apply to every page:
 5. No fixed heights on content sections.
 6. Page scripts check that their elements exist before using them; a missing element must never throw.
 7. Interactive product UI uses real buttons, native `details`/`summary` for accordions and correct ARIA for tabs, with visible keyboard focus (2px gold outline).
-8. Calls to action use their final destinations; undecided destinations use `.btn--pending` (14.3).
+8. Calls to action use their final destinations; a CTA whose page is not built yet stays `hidden` (14.3).
 9. Change only the files the current task needs; never change an approved page as a side effect.
 10. All repository content (copy, comments, docs) is in English.
 

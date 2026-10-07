@@ -226,7 +226,6 @@
       </article>
     </div>
     <p class="small hgw-after"><b>After a project:</b> capacity may become available again for Use or another project. This applies across the options above; it is not a separate option.</p>
-    <p class="caption placeholder-note hgw-after">Status labels are drafts until the product team confirms them.</p>
   </div>
 </section>
 
@@ -318,13 +317,16 @@
       </aside>
       <div class="btn-row btn-row--stack hgw-final-actions">
         <a class="btn btn--primary" href="#your-options">Review your GLO options</a>
-        <span class="btn btn--secondary btn--pending" aria-disabled="true">Learn about membership</span>
+        <a class="btn btn--secondary" href="membership.html" hidden>Learn about membership</a>
       </div>
-      <p class="caption placeholder-note">Membership page to be confirmed by the product team.</p>
     </div>
-    <figure class="media-frame media-frame--placeholder" style="--ratio: 4 / 5">
-      <div class="media-frame__box"><p class="media-frame__note"><b>Photo to come</b>A member and Gia reviewing a simple panel with the four options: informed choice and control, not a token image.</p></div>
-      <figcaption class="caption">Placeholder until the photo is supplied.</figcaption>
+    <figure class="media-frame" style="--ratio: 4 / 5">
+      <div class="media-frame__box">
+        <picture>
+          <source type="image/webp" srcset="assets/images/hgw-choice-panel-800.webp 600w, assets/images/hgw-choice-panel-1448.webp 1086w" sizes="(max-width: 960px) 100vw, 560px">
+          <img class="hgw-final-photo" src="assets/images/hgw-choice-panel-1448.jpg" srcset="assets/images/hgw-choice-panel-800.jpg 600w, assets/images/hgw-choice-panel-1448.jpg 1086w" sizes="(max-width: 960px) 100vw, 560px" width="1086" height="1448" loading="lazy" decoding="async" alt="Gia showing a member a panel with four paths: Use, Put it to work, Support and Transfer">
+        </picture>
+      </div>
     </figure>
   </div>
 </section>
@@ -334,7 +336,7 @@
 <!-- shell:footer -->
 <footer class="site-footer">
   <div class="container">
-    <div class="footer__top">
+    <div class="footer__top" style="--footer-cols: 2">
       <div class="footer__brand">
         <a class="footer-logo" href="index.html" aria-label="Glonari, Meet Gia">
           <picture>
@@ -357,14 +359,6 @@
         <p class="footer__head">Membership</p>
         <ul>
           <li><a href="index.html#join">Join the waitlist</a></li>
-          <li><span class="footer__todo">Learn about membership <span class="footer__tbc">link to be confirmed</span></span></li>
-        </ul>
-      </div>
-      <div class="footer__col">
-        <p class="footer__head">Legal</p>
-        <ul>
-          <li><span class="footer__todo">Privacy <span class="footer__tbc">page to come</span></span></li>
-          <li><span class="footer__todo">Terms <span class="footer__tbc">page to come</span></span></li>
         </ul>
       </div>
     </div>

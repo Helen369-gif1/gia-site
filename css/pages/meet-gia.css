@@ -170,8 +170,9 @@
 .say__label { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; color: var(--gp-text-muted); }
 .faq { margin-top: 64px; max-width: 800px; }
 .faq h3 { margin-bottom: 16px; }
-.faq details { border-top: 1px solid var(--gp-line); }
-.faq details:last-of-type { border-bottom: 1px solid var(--gp-line); }
+/* Lines between questions; written so a hidden question (pending answer) leaves no double or missing line. */
+.faq details { border-bottom: 1px solid var(--gp-line); }
+.faq h3 + details { border-top: 1px solid var(--gp-line); }
 .faq summary { cursor: pointer; list-style: none; padding: 20px 40px 20px 0; font-size: 17px; font-weight: 500; position: relative; }
 .faq summary::-webkit-details-marker { display: none; }
 .faq summary::after { content: "+"; position: absolute; right: 4px; top: 50%; transform: translateY(-50%); font-size: 22px; color: var(--gp-gold); font-weight: 400; }

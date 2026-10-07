@@ -75,7 +75,6 @@
 /* ===== 04 Options ===== */
 .option--transfer { border-color: rgba(195, 115, 78, .45); }
 .hgw-after { margin-top: 24px; max-width: 760px; }
-.hgw-after + .hgw-after { margin-top: 8px; }
 .hgw-after b { color: var(--gp-text); }
 
 /* ===== 05 Global Connections vs secondary market: two separate paths, no shared endpoint ===== */
@@ -132,5 +131,6 @@
 /* ===== 07 Final & important information ===== */
 .hgw-notice { margin-top: 32px; }
 .hgw-final-actions { margin-top: 32px; }
-.hgw-final-actions + .caption { margin-top: 12px; }
 #important-info .final { align-items: start; }
+/* Final photo: keep Gia's face and the options panel in frame (the 4:5 frame trims only top and bottom). */
+.hgw-final-photo { object-position: 50% 40%; }
