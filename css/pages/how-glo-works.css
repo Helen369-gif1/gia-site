@@ -97,49 +97,37 @@
 .hgw-limit .small { margin: 0; }
 @media (max-width: 768px) { .paths { grid-template-columns: minmax(0, 1fr); gap: 24px; } .path { padding: 24px; } }
 
-/* ===== 06 Ecosystem: one end-to-end diagram ===== */
+/* ===== 06 Ecosystem: one end-to-end diagram, a pulse diagram [data-pulse="eco"] wired by js/pages/how-glo-works.js ===== */
 .eco {
-  --eco-gap: 64px; --eco-row: 44px;
+  --eco-gap: clamp(44px, 5vw, 64px); --eco-row: 80px;
   display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); grid-template-areas: ". you ." "req gia out" ". glo ." "after after after";
   column-gap: var(--eco-gap); row-gap: var(--eco-row); align-items: center; max-width: 1040px; margin-inline: auto;
 }
-.eco__node { position: relative; display: grid; gap: 4px; padding: 16px 18px; text-align: center; background: var(--gp-surface); border: 1px solid var(--gp-line); border-radius: 8px; }
+.eco__node { position: relative; z-index: 1; display: grid; gap: 4px; padding: 16px 18px; text-align: center; background: var(--gp-surface); border: 1px solid var(--gp-line); border-radius: 8px; }
 .eco__name { font-size: 17px; font-weight: 600; color: var(--gp-text); }
 .eco__desc { font-size: 13px; line-height: 1.45; color: var(--gp-text-2); }
-.eco__you { grid-area: you; max-width: 300px; justify-self: center; }
+.eco__you { grid-area: you; max-width: 280px; justify-self: center; }
 .eco__req { grid-area: req; }
 .eco__out { grid-area: out; border-color: var(--gp-gold-dark); }
-.eco__glo { grid-area: glo; max-width: 320px; justify-self: center; }
-.eco__gia {
-  grid-area: gia; position: relative; width: 210px; aspect-ratio: 1; border-radius: 50%; display: grid; place-content: center; gap: 6px; padding: 24px; text-align: center;
-  border: 1px solid var(--gp-glass-border-active); background: radial-gradient(circle at 50% 35%, rgba(242, 179, 90, .14), transparent 70%), var(--gp-surface-2);
-}
-.eco__gia-name { font-family: var(--font-display); font-size: 36px; font-weight: 600; line-height: 1; color: var(--gp-champagne); }
-/* connectors: You -> Gia, Work requests -> Gia, Gia -> Deliverable, GLO -> Gia, GLO -> After */
-.eco__you::after, .eco__glo::after, .eco__after::before { content: ""; position: absolute; left: 50%; width: 1px; height: var(--eco-row); background: var(--gp-gold-mid); }
-.eco__you::after { top: 100%; }
-.eco__glo::after { bottom: 100%; }
-.eco__req::after, .eco__gia::after { content: ""; position: absolute; top: 50%; left: 100%; width: var(--eco-gap); height: 1px; background: var(--gp-gold-mid); }
-.eco__you::before, .eco__req::before, .eco__out::before, .eco__glo::before { content: ""; position: absolute; }
-.eco__you::before { top: calc(100% + var(--eco-row) - 7px); left: calc(50% - 4px); border-top: 7px solid var(--gp-gold-mid); border-inline: 4.5px solid transparent; }
-.eco__glo::before { bottom: calc(100% + var(--eco-row) - 7px); left: calc(50% - 4px); border-bottom: 7px solid var(--gp-gold-mid); border-inline: 4.5px solid transparent; }
-.eco__req::before { top: calc(50% - 4px); left: calc(100% + var(--eco-gap) - 7px); border-left: 7px solid var(--gp-gold-mid); border-block: 4.5px solid transparent; }
-.eco__out::before { top: calc(50% - 4px); left: -8px; border-left: 7px solid var(--gp-gold-mid); border-block: 4.5px solid transparent; }
-.eco__after { grid-area: after; position: relative; display: grid; gap: 12px; justify-items: center; padding-top: 4px; }
-.eco__after::before { bottom: 100%; background: var(--gp-text-muted); }
+.eco__glo { grid-area: glo; max-width: 280px; justify-self: center; }
+.eco__gia { grid-area: gia; }
+.eco__gia .gia-core__plate { max-width: 280px; }
+.eco__after { grid-area: after; position: relative; z-index: 1; display: grid; gap: 12px; justify-items: center; margin-top: -24px; }
 .eco__after-label { margin: 0; font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gp-copper); }
 .eco__paths { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-.eco__path { padding: 8px 16px; border-radius: 999px; border: 1px solid var(--gp-glass-border); font-size: 14px; font-weight: 500; color: var(--gp-text); }
+.eco__path { position: relative; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--gp-glass-border); font-size: 14px; font-weight: 500; color: var(--gp-text); }
 .eco__path small { margin-left: 6px; font-size: 12px; font-weight: 400; color: var(--gp-text-muted); }
 .eco__path--dash { border-style: dashed; border-color: var(--gp-text-muted); }
 .eco__path--warn { border-color: rgba(195, 115, 78, .6); }
+@media (max-width: 1100px) { .eco__you, .eco__glo { max-width: 232px; } } /* wider side cards before the vertical layout */
+/* Vertical below 860px: the three inputs above Gia (GLO capacity moves up by grid area only), Deliverable below */
 @media (max-width: 860px) {
-  .eco { grid-template-columns: minmax(0, 1fr); grid-template-areas: "you" "req" "gia" "out" "glo" "after"; row-gap: 16px; }
+  .eco { --pulse-layout: vertical; grid-template-columns: minmax(0, 1fr); grid-template-areas: "you" "req" "glo" "gia" "out" "after"; row-gap: 16px; max-width: 600px; padding-inline: 28px; }
   .eco__you, .eco__glo { max-width: none; justify-self: stretch; }
-  .eco__gia { justify-self: center; width: 180px; }
-  .eco__you::after, .eco__glo::after, .eco__req::after, .eco__gia::after, .eco__after::before,
-  .eco__you::before, .eco__req::before, .eco__out::before, .eco__glo::before { display: none; }
+  .eco__gia { --core: 140px; margin-block: 40px 56px; }
+  .eco__after { margin-top: 16px; }
 }
+@media (max-width: 480px) { .eco { padding-inline: 22px; } }
 
 /* ===== 07 Final & important information ===== */
 .hgw-notice { margin-top: 32px; }

@@ -258,33 +258,60 @@
   .steps-line__item:not(:last-child)::after { top: 50px; bottom: 6px; left: 22px; right: auto; width: 1px; height: auto; }
 }
 
+/* ===== Gia core: Gia's photo in a gold ring, name plate over the lower edge (hub, ecosystem) ===== */
+.gia-core { --core: 180px; position: relative; z-index: 1; width: var(--core); aspect-ratio: 1; justify-self: center; }
+.gia-core__photo {
+  position: absolute; inset: 0; overflow: hidden; border-radius: 50%; background: var(--gp-surface-2);
+  border: 1px solid var(--gp-gold); box-shadow: 0 0 32px rgba(242, 179, 90, .16), 0 0 72px rgba(242, 179, 90, .06);
+}
+.gia-core__photo img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
+.gia-core__glow { position: absolute; inset: -1px; border-radius: 50%; pointer-events: none; opacity: 0; box-shadow: 0 0 0 1px var(--gp-gold-glow), 0 0 28px rgba(250, 185, 90, .55), 0 0 72px rgba(250, 185, 90, .25); }
+.gia-core__plate {
+  position: absolute; left: 50%; top: 100%; z-index: 1; transform: translate(-50%, -50%); width: max-content; max-width: 240px;
+  margin: 0; padding: 8px 14px; display: grid; gap: 3px; text-align: center;
+  background: rgba(15, 15, 14, .94); border: 1px solid var(--gp-glass-border); border-radius: 10px;
+}
+.gia-core__name { font-family: var(--font-display); font-size: 20px; font-weight: 600; line-height: 1; color: var(--gp-champagne); }
+.gia-core__sub { font-size: 12px; line-height: 1.35; color: var(--gp-text-2); }
+
+/* ===== Pulse diagram [data-pulse]: wiring, pulses and card status drawn by js/components.js ===== */
+[data-pulse] { position: relative; }
+.pulse-wires { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.pulse-wires path, .pulse-wires circle { fill: none; }
+.pulse-lines { opacity: .62; transition: opacity .6s var(--ease); }
+.pulse-line { stroke: var(--gp-gold); stroke-opacity: .4; stroke-width: 1; }
+.pulse-line--muted { stroke: var(--gp-text-muted); stroke-opacity: .7; }
+.pulse-wires .pulse-arrow { fill: var(--gp-gold-mid); }
+.pulse-comet { opacity: 0; stroke: var(--gp-gold-glow); stroke-linecap: round; }
+.pulse-comets { filter: drop-shadow(0 0 3px rgba(250, 185, 90, .9)) drop-shadow(0 0 8px rgba(250, 185, 90, .45)); }
+.pulse-wires .pulse-dot { fill: var(--gp-gold-glow); opacity: 0; transform-box: fill-box; transform-origin: center; filter: drop-shadow(0 0 4px rgba(250, 185, 90, .95)); }
+.pulse-status { position: absolute; top: var(--status-top, 10px); left: var(--status-left, 10px); width: 16px; height: 16px; pointer-events: none; }
+.pulse-status > span { position: absolute; inset: 0; opacity: 0; }
+.pulse-status svg { display: block; width: 100%; height: 100%; overflow: visible; transform-origin: 50% 50%; }
+.pulse-status__track { fill: none; stroke: var(--gp-gold); stroke-opacity: .2; stroke-width: 1.5; }
+.pulse-status__arc { fill: none; stroke: var(--gp-gold); stroke-width: 1.5; stroke-linecap: round; }
+.pulse-status__disc { fill: var(--gp-gold); }
+.pulse-status__tick { fill: none; stroke: var(--gp-on-gold); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.pulse-hl { position: absolute; inset: -1px; pointer-events: none; opacity: 0; border: 1px solid var(--gp-gold); border-style: inherit; border-radius: inherit; box-shadow: 0 0 14px rgba(242, 179, 90, .22); }
+/* final state: after the last cycle and under reduced motion */
+.is-final .pulse-lines { opacity: 1; }
+.is-final .pulse-status__check { opacity: 1; }
+.is-final .pulse-status__tick { stroke-dashoffset: 0; }
+
 /* ===== Hub: Gia in the center, resources on both sides ===== */
-.hub { --hub-gap: 72px; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); column-gap: var(--hub-gap); align-items: center; }
-.hub__side { --rows: 3; position: relative; list-style: none; margin: 0; padding: 0; display: grid; grid-auto-rows: 1fr; gap: 12px; }
-.hub__node { position: relative; padding: 14px 18px; background: var(--gp-surface); border: 1px solid var(--gp-line); border-radius: 8px; display: grid; gap: 2px; }
+.hub { --hub-gap: 88px; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); column-gap: var(--hub-gap); align-items: center; }
+.hub__side { position: relative; z-index: 1; list-style: none; margin: 0; padding: 0; display: grid; grid-auto-rows: 1fr; gap: 12px; }
+.hub__node { --status-top: 18px; --status-left: 16px; position: relative; padding: 14px 18px 14px 44px; background: var(--gp-surface); border: 1px solid var(--gp-line); border-radius: 8px; display: grid; gap: 2px; }
 .hub__name { font-size: 16px; font-weight: 600; color: var(--gp-text); }
 .hub__desc { font-size: 13px; line-height: 1.45; color: var(--gp-text-2); }
-.hub__node::after { content: ""; position: absolute; top: 50%; width: calc(var(--hub-gap) / 2); height: 1px; background: var(--gp-line); }
-.hub__side--left .hub__node::after { left: 100%; }
-.hub__side--right .hub__node::after { right: 100%; }
-.hub__side::after { content: ""; position: absolute; width: 1px; background: var(--gp-line); top: calc((100% - (var(--rows) - 1) * 12px) / var(--rows) / 2); bottom: calc((100% - (var(--rows) - 1) * 12px) / var(--rows) / 2); }
-.hub__side--left::after { left: calc(100% + var(--hub-gap) / 2); }
-.hub__side--right::after { right: calc(100% + var(--hub-gap) / 2); }
-.hub__core {
-  position: relative; width: 184px; aspect-ratio: 1; border-radius: 50%; display: grid; place-content: center; gap: 4px; text-align: center; padding: 20px;
-  border: 1px solid var(--gp-glass-border-active); background: radial-gradient(circle at 50% 35%, rgba(242, 179, 90, .14), transparent 70%), var(--gp-surface-2);
-}
-.hub__core::before, .hub__core::after { content: ""; position: absolute; top: 50%; width: calc(var(--hub-gap) / 2); height: 1px; background: var(--gp-gold-mid); }
-.hub__core::before { right: 100%; }
-.hub__core::after { left: 100%; }
-.hub__core-name { font-family: var(--font-display); font-size: 34px; font-weight: 600; line-height: 1; color: var(--gp-champagne); }
-.hub__core-sub { font-size: 13px; line-height: 1.4; color: var(--gp-text-2); }
+/* Vertical below 960px: Compute, Models, Tools above Gia, Agents, Research, Execution below, wired along side rails.
+   This replaces the wireframe's two compact columns (approved change, so the wiring and pulses can run vertically). */
 @media (max-width: 960px) {
-  .hub { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); row-gap: 24px; column-gap: 12px; }
-  .hub__core { grid-column: 1 / -1; grid-row: 1; justify-self: center; width: 160px; }
-  .hub__node::after, .hub__side::after, .hub__core::before, .hub__core::after { display: none; }
+  .hub { --pulse-layout: vertical; grid-template-columns: minmax(0, 1fr); row-gap: 64px; max-width: 600px; margin-inline: auto; padding-inline: 28px; }
+  .hub .gia-core { --core: 140px; }
+  .hub__side--right { margin-top: 20px; } /* room for the name plate under Gia */
 }
-@media (max-width: 480px) { .hub__node { padding: 12px; } .hub__desc { font-size: 12.5px; } } /* two compact columns, per the wireframe */
+@media (max-width: 480px) { .hub { padding-inline: 22px; } .hub__node { padding: 12px 12px 12px 38px; --status-top: 15px; --status-left: 12px; } .hub__desc { font-size: 12.5px; } }
 
 /* ===== Accordion (native details/summary; give a group the same name="" to keep one open) ===== */
 .accordion { display: grid; gap: 12px; }

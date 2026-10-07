@@ -18,7 +18,19 @@
      it starts from the first frame and stops on the last frame. No loop. When it leaves the
      screen it rewinds, so it can play again the next time it comes into view.
      Under reduced motion it never plays; data-still (an image of the last frame) replaces the
-     poster so the complete composition is shown. */
+     poster so the complete composition is shown.
+
+   Pulse diagram  [data-pulse="<name>"]   (hub on Introducing GLO, ecosystem on How GLO Works)
+     One absolutely positioned SVG draws the wiring between the cards and Gia (.gia-core), measured from
+     getBoundingClientRect and redrawn by a ResizeObserver. A diagram definition, registered with
+     GiaPulse.define(name, def), gives the routes and the scenario of one cycle: pulses run along the
+     wires, a status on each card spins while its pulse travels and turns into a check when it arrives.
+     When the diagram comes into view the cycle plays 3 times, then it stops on its final state
+     (.is-final: every check shown, wiring brighter). Hovering it with a mouse plays one more cycle.
+     It pauses when it leaves the screen or the tab is hidden and resumes when back; after the final
+     state, leaving the screen completely re-arms it for the next visit.
+     A def's routes read CSS --pulse-layout: vertical (set by the component at its own breakpoint).
+     Under reduced motion it never animates and shows the final state. */
 (() => {
   const { reduce } = window.GiaSite || { reduce: window.matchMedia('(prefers-reduced-motion: reduce)').matches };
 
@@ -139,5 +151,274 @@
         }
       });
     }, { threshold: 0.5 }).observe(v);
+  });
+
+  /* ---------- Pulse diagram ---------- */
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = (tag, attrs, parent) => {
+    const el = document.createElementNS(NS, tag);
+    for (const k in attrs) el.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(el);
+    return el;
+  };
+  const STATUS_HTML =
+    '<span class="pulse-status__spin"><svg viewBox="0 0 16 16"><circle class="pulse-status__track" cx="8" cy="8" r="6.5"/><path class="pulse-status__arc" d="M8 1.5a6.5 6.5 0 0 1 6.5 6.5"/></svg></span>' +
+    '<span class="pulse-status__check"><svg viewBox="0 0 16 16"><circle class="pulse-status__disc" cx="8" cy="8" r="8"/><path class="pulse-status__tick" pathLength="1" d="M4.7 8.3l2.2 2.2 4.4-4.6"/></svg></span>';
+  const CYCLES = 3;
+  const COMET = [[64, 0.22, 1], [30, 0.5, 1.25], [10, 1, 1.75]];   // comet layers, tail to head: [length px, opacity, width]
+  const EASE = 'cubic-bezier(.22, .61, .36, 1)';
+
+  // Orthogonal route with rounded corners: path data plus the cleaned corner points.
+  const route = (raw, radius = 12) => {
+    const p = [];
+    raw.forEach((q) => { const l = p[p.length - 1]; if (!l || Math.hypot(q[0] - l[0], q[1] - l[1]) > 0.5) p.push(q); });
+    for (let i = p.length - 2; i > 0; i--) {
+      const a = p[i - 1], b = p[i], c = p[i + 1];
+      if (Math.abs((b[0] - a[0]) * (c[1] - b[1]) - (b[1] - a[1]) * (c[0] - b[0])) < 0.5) p.splice(i, 1);
+    }
+    const f = (q) => q[0].toFixed(1) + ' ' + q[1].toFixed(1);
+    let d = 'M' + f(p[0]);
+    for (let i = 1; i < p.length - 1; i++) {
+      const a = p[i - 1], b = p[i], c = p[i + 1];
+      const l1 = Math.hypot(b[0] - a[0], b[1] - a[1]), l2 = Math.hypot(c[0] - b[0], c[1] - b[1]);
+      const k = Math.min(radius, l1 / 2, l2 / 2);
+      d += ' L' + f([b[0] + (a[0] - b[0]) * k / l1, b[1] + (a[1] - b[1]) * k / l1]) +
+           ' Q' + f(b) + ' ' + f([b[0] + (c[0] - b[0]) * k / l2, b[1] + (c[1] - b[1]) * k / l2]);
+    }
+    return { d: d + ' L' + f(p[p.length - 1]), pts: p };
+  };
+  const segLen = (a, b) => Math.hypot(b[0] - a[0], b[1] - a[1]);
+  // Distance along a polyline to a point on it.
+  const along = (pts, q) => {
+    let acc = 0;
+    for (let i = 1; i < pts.length; i++) {
+      const a = pts[i - 1], b = pts[i], len = segLen(a, b);
+      if (Math.abs(segLen(a, q) + segLen(q, b) - len) < 1) return acc + segLen(a, q);
+      acc += len;
+    }
+    return acc;
+  };
+
+  class PulseDiagram {
+    constructor(root, def) {
+      this.root = root; this.def = def;
+      this.anims = []; this.clock = null; this.left = 0;
+      this.state = 'idle';          // idle | running | final
+      this.paused = false; this.inView = false; this.armed = true;
+      const core = root.querySelector('.gia-core');
+      if (core) {
+        this.glow = document.createElement('span');
+        this.glow.className = 'gia-core__glow'; this.glow.setAttribute('aria-hidden', 'true');
+        core.querySelector('.gia-core__photo').after(this.glow);
+      }
+      this.nodes = def.nodes(root);
+      this.nodes.forEach((n) => {
+        const s = document.createElement('span');
+        s.className = 'pulse-status'; s.setAttribute('aria-hidden', 'true'); s.innerHTML = STATUS_HTML;
+        n.appendChild(s);
+      });
+      (def.highlights ? def.highlights(root) : []).forEach((el) => {
+        const s = document.createElement('span'); s.className = 'pulse-hl'; s.setAttribute('aria-hidden', 'true'); el.appendChild(s);
+      });
+      this.wires = svg('svg', { class: 'pulse-wires', 'aria-hidden': 'true', focusable: 'false' });
+      root.prepend(this.wires);
+      this.build();
+
+      let raf = 0;
+      const ro = new ResizeObserver(() => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => this.relayout()); });
+      [root, core, ...this.nodes].forEach((el) => el && ro.observe(el));
+
+      if (reduce) { this.state = 'final'; root.classList.add('is-final'); return; }
+      new IntersectionObserver(([en]) => {
+        if (en.intersectionRatio >= 0.35) this.inView = true;
+        else if (!en.isIntersecting) { this.inView = false; if (this.state === 'final') this.armed = true; }
+        this.sync();
+      }, { threshold: [0, 0.35] }).observe(root);
+      document.addEventListener('visibilitychange', () => this.sync());
+      root.addEventListener('pointerenter', (e) => {
+        if (e.pointerType === 'mouse' && this.state === 'final' && this.inView && !document.hidden) this.play(1);
+      });
+    }
+
+    rect(el) {
+      const R = this.root.getBoundingClientRect(), r = el.getBoundingClientRect();
+      const l = r.left - R.left, t = r.top - R.top;
+      return { l, t, r: l + r.width, b: t + r.height, cx: l + r.width / 2, cy: t + r.height / 2 };
+    }
+
+    build() {
+      const vertical = getComputedStyle(this.root).getPropertyValue('--pulse-layout').trim() === 'vertical';
+      const specs = this.def.routes({ root: this.root, rect: (el) => this.rect(el), vertical });
+      this.wires.setAttribute('viewBox', `0 0 ${this.root.offsetWidth} ${this.root.offsetHeight}`);
+      this.wires.textContent = '';
+      const lines = svg('g', { class: 'pulse-lines' }, this.wires);
+      const comets = svg('g', { class: 'pulse-comets' }, this.wires);
+      const dotLayer = svg('g', {}, this.wires);
+      const dotAt = new Map();
+      this.paths = {};
+      specs.forEach((s) => {
+        const { d, pts } = route(s.pts);
+        const base = svg('path', { d, class: 'pulse-line' + (s.muted ? ' pulse-line--muted' : '') }, lines);
+        if (s.arrow) {
+          const a = pts[pts.length - 2], b = pts[pts.length - 1], n = segLen(a, b) || 1;
+          const ux = (b[0] - a[0]) / n, uy = (b[1] - a[1]) / n, bx = b[0] - ux * 7, by = b[1] - uy * 7;
+          svg('path', { class: 'pulse-arrow', d: `M${b[0]} ${b[1]} L${bx - uy * 4.5} ${by + ux * 4.5} L${bx + uy * 4.5} ${by - ux * 4.5} Z` }, lines);
+        }
+        if (s.muted) return;
+        const len = base.getTotalLength();
+        let poly = 0; for (let i = 1; i < pts.length; i++) poly += segLen(pts[i - 1], pts[i]);
+        const cmax = Math.min(COMET[0][0], len * 0.9);
+        const layers = COMET.map(([c, o, w]) => {
+          const cl = Math.min(c, cmax);
+          const el = svg('path', { d, class: 'pulse-comet', 'stroke-width': w, 'stroke-opacity': o, 'stroke-dasharray': `${cl} ${len + cmax + cl + 10}` }, comets);
+          return { el, len: cl };
+        });
+        const dots = [...(s.dots || []), pts[pts.length - 1]].map((q) => {
+          const key = Math.round(q[0]) + ',' + Math.round(q[1]);
+          if (!dotAt.has(key)) dotAt.set(key, svg('circle', { class: 'pulse-dot', cx: q[0], cy: q[1], r: 2.5 }, dotLayer));
+          return { el: dotAt.get(key), dist: along(pts, q) * len / (poly || 1) };
+        });
+        this.paths[s.key] = { node: s.node, len, cmax, layers, dots };
+      });
+    }
+
+    relayout() {
+      this.build();
+      if (this.state === 'running') this.cycle();   // restart the current cycle on the new geometry
+    }
+
+    sync() {
+      const active = this.inView && !document.hidden;
+      if (this.state === 'running') { if (active) this.resume(); else this.pause(); }
+      else if (active && this.armed) { this.armed = false; this.play(CYCLES); }
+    }
+
+    play(cycles) {
+      const fromFinal = this.state === 'final';
+      this.left = cycles; this.state = 'running'; this.paused = false;
+      this.root.classList.remove('is-final');
+      this.cycle(fromFinal ? 450 : 0, fromFinal);
+    }
+
+    cycle(lead = 0, fromFinal = false) {
+      this.stop();
+      const A = (el, keyframes, at, duration, opts) => {
+        const a = el.animate(keyframes, Object.assign({ delay: lead + at, duration, fill: 'forwards', easing: EASE }, opts));
+        this.anims.push(a);
+        return a;
+      };
+      const checks = this.nodes.map((n) => n.querySelector('.pulse-status__check'));
+      if (fromFinal) checks.forEach((c) => A(c, [{ opacity: 1 }, { opacity: 0 }], -lead, 400));
+      const tl = {
+        // A pulse along a route; returns the time its head arrives at the end.
+        pulse: (key, at, dur = 1000) => {
+          const p = this.paths[key];
+          if (!p) return at;
+          const span = p.len + p.cmax;
+          p.layers.forEach((c) => A(c.el, [{ strokeDashoffset: c.len, opacity: 1 }, { strokeDashoffset: c.len - span, opacity: 1 }], at, dur, { easing: 'linear', fill: 'none' }));
+          p.dots.forEach(({ el, dist }) => A(el,
+            [{ opacity: 0, transform: 'scale(.4)' }, { opacity: 1, transform: 'scale(1.3)', offset: 0.3 }, { opacity: 0, transform: 'scale(.6)' }],
+            at + dur * dist / span - 80, 650, { fill: 'none' }));
+          return at + dur * p.len / span;
+        },
+        // Card status: spinner from `at`, check from `done`.
+        status: (node, at, done) => {
+          const spin = node.querySelector('.pulse-status__spin'), check = node.querySelector('.pulse-status__check');
+          A(spin, [{ opacity: 0, transform: 'scale(.6)' }, { opacity: 1, transform: 'none' }], at, 220);
+          A(spin.firstElementChild, [{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], at, 800, { iterations: Infinity, easing: 'linear', fill: 'none' });
+          A(spin, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(.6)' }], done, 200);
+          A(check, [{ opacity: 0, transform: 'scale(.6)' }, { opacity: 1, transform: 'none' }], done, 320);
+          A(check.querySelector('.pulse-status__tick'), [{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], done + 120, 360);
+        },
+        run: (key, at, dur) => {
+          const done = tl.pulse(key, at, dur);
+          if (this.paths[key]) tl.status(this.paths[key].node, at, done);
+          return done;
+        },
+        flash: (at) => { if (this.glow) A(this.glow, [{ opacity: 0 }, { opacity: 1, offset: 0.35 }, { opacity: 0 }], at, 800, { fill: 'none', easing: 'ease-in-out' }); },
+        highlight: (el, at) => { const h = el.querySelector('.pulse-hl'); if (h) A(h, [{ opacity: 0 }, { opacity: 1, offset: 0.4 }, { opacity: 0 }], at, 700, { fill: 'none' }); },
+      };
+      const settle = this.def.scenario(tl, this.root);
+      let total = settle + 200;
+      if (this.left > 1) {
+        const fadeAt = settle + (this.def.pause || 1500);
+        checks.forEach((c) => A(c, [{ opacity: 1 }, { opacity: 0 }], fadeAt, 700));
+        total = Math.max(this.def.cycle || 0, fadeAt + 900);
+      }
+      this.clock = new Animation(new KeyframeEffect(null, null, { duration: lead + total }), document.timeline);
+      this.clock.onfinish = () => this.next();
+      this.clock.play();
+      if (this.paused) { this.paused = false; this.pause(); }
+    }
+
+    next() {
+      this.left -= 1;
+      if (this.left > 0) { this.cycle(); return; }
+      this.state = 'final';
+      this.root.classList.add('is-final');
+      this.stop();
+    }
+
+    stop() {
+      this.anims.forEach((a) => a.cancel());
+      this.anims = [];
+      if (this.clock) { this.clock.onfinish = null; this.clock.cancel(); this.clock = null; }
+    }
+
+    pause() {
+      if (this.paused) return;
+      this.paused = true;
+      this.anims.forEach((a) => { if (a.playState === 'running') a.pause(); });
+      if (this.clock) this.clock.pause();
+    }
+
+    resume() {
+      if (!this.paused) return;
+      this.paused = false;
+      this.anims.forEach((a) => { if (a.playState === 'paused') a.play(); });
+      if (this.clock) this.clock.play();
+    }
+  }
+
+  window.GiaPulse = {
+    define(name, def) {
+      document.querySelectorAll(`[data-pulse="${name}"]`).forEach((el) => {
+        if (!el.giaPulse) el.giaPulse = new PulseDiagram(el, def);
+      });
+    },
+  };
+
+  /* Hub: Gia decides what each task needs, so pulses run out from Gia to the resources, in pairs.
+     Wide: a bus on each side between Gia and the cards. Vertical (960px and below): side rails. */
+  window.GiaPulse.define('hub', {
+    cycle: 8000, pause: 2200,
+    nodes: (root) => [...root.querySelectorAll('.hub__node')],
+    routes({ root, rect, vertical }) {
+      const core = rect(root.querySelector('.gia-core__photo'));
+      const plate = rect(root.querySelector('.gia-core__plate'));
+      const out = [];
+      ['left', 'right'].forEach((side) => {
+        const list = root.querySelector('.hub__side--' + side), box = rect(list);
+        [...list.children].forEach((node, i) => {
+          const r = rect(node), key = side[0] + i;
+          if (!vertical) {
+            const west = side === 'left', x0 = west ? core.l : core.r, x1 = west ? r.r : r.l, bus = (x0 + x1) / 2;
+            const y = Math.abs(r.cy - core.cy) < 2 ? core.cy : r.cy;
+            out.push({ key, node, pts: [[x0, core.cy], [bus, core.cy], [bus, y], [x1, y]], dots: y === core.cy ? [] : [[bus, core.cy]] });
+          } else {
+            const up = side === 'left', rail = up ? box.l - 14 : box.r + 14;
+            const y0 = up ? core.t : plate.b, yb = up ? (box.b + core.t) / 2 : (plate.b + box.t) / 2;
+            out.push({ key, node, pts: [[core.cx, y0], [core.cx, yb], [rail, yb], [rail, r.cy], [up ? r.l : r.r, r.cy]], dots: [[rail, r.cy]] });
+          }
+        });
+      });
+      return out;
+    },
+    scenario(tl) {
+      tl.flash(0);
+      let done = 0;
+      [0, 1, 2].forEach((i) => ['l', 'r'].forEach((s) => { done = Math.max(done, tl.run(s + i, 500 + i * 500, 1100)); }));
+      return done + 400;
+    },
   });
 })();

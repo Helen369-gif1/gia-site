@@ -34,18 +34,21 @@ Introducing GLO also links straight to How GLO Works from its options section, a
     css/base.css               reset, type, sections, buttons, reveal
     css/components.css         shared components: glass UI, chat atoms, status, card, split, log, tiers, task workspace,
                                final CTA, and (stage 3) page hero, badge, flow, steps line, hub, accordion,
-                               option card, ownership indicator, terms sheet, approval sheet, is/is not, notice
+                               option card, ownership indicator, terms sheet, approval sheet, is/is not, notice,
+                               Gia core (photo in a gold ring), pulse diagram
     css/shell.css              header, mobile menu, scroll progress, footer, logo
     css/pages/<page>.css       page-only sections (meet-gia, glo, global-connections, how-glo-works)
-    js/components.js           shared component behavior: approval sheet, looping hero video (pages 2-4)
+    js/components.js           shared component behavior: approval sheet, play-once hero video (pages 2-4),
+                               pulse diagrams [data-pulse] (wiring, pulses, card status; the hub's routes and scenario)
     js/site.js                 shared shell: menu, scroll progress, active section, reveal; exposes window.GiaSite
     js/pages/meet-gia.js       Meet Gia: hero scroll video, section 03 video, In action, Memory, permissions, approval, waitlist
     js/pages/meet-gia-frames.js  list of Meet Gia hero video frames
-    js/pages/<page>.js         page scripts for the other pages
+    js/pages/<page>.js         page scripts for the other pages (how-glo-works.js: the ecosystem pulse diagram)
     assets/logo/               Glonari mark, horizontal and stacked lockups, favicons
     assets/hero-frames/        96 WebP frames of the Meet Gia hero video (scroll-scrubbed on a canvas)
     assets/video/              works-with-you.mp4, the Meet Gia section 03 video (plays once per visit)
-    assets/images/             optimized photos and the section 03 first/last frames
+    assets/images/             optimized photos (gia.webp + gia.png fallback, 400x400 face crop of
+                               assets/source/gia-original.png) and the section 03 first/last frames
     assets/source/             originals: videos, persona photos, logos as supplied
     docs/                      design system, color system, wireframes
     docs/components.html       live reference of every shared component (open via the local server)
@@ -94,3 +97,7 @@ At 1100px and below both collapse into the menu button.
   The example project (logistics market briefing) is invented for illustration and used consistently in sections 02-08.
 - Placeholders, Introducing GLO: final CTA photo,
   "Learn about membership" destination, capability status labels (drafts, conservative), example values in the workspace.
+- Pulse diagrams (Introducing GLO 02 hub, How GLO Works 06 ecosystem): Gia's photo in the center, wiring drawn in one SVG
+  from the measured cards, pulses and card status driven by js/components.js. The cycle plays 3 times when the diagram
+  comes into view, then rests on the final state; mouse hover plays it once more; it pauses off screen and in a hidden tab.
+  Rules: docs/GIA-SITE-DESIGN-SYSTEM.md, section 8.6. reference/ holds design references only and is not part of the site.

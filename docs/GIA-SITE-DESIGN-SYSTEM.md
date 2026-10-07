@@ -91,7 +91,7 @@ The spacing scale is 8, 16, 24, 32, 48, 64, 96, 128, 160px. Use only these value
   - the hero headline of each page (on Meet Gia, the scroll-video captions);
   - the final call-to-action headline of each page (`.final__h`);
   - the GLONARI wordmark in the header (section 12.4);
-  - Gia's name inside product UI (for example `.phone__title`, `.hub__core-name`).
+  - Gia's name inside product UI (for example `.phone__title`, `.gia-core__name`).
 - **IBM Plex Sans**: everything else — H2 to H4, body, buttons, navigation, cards, product UI text.
 - **IBM Plex Mono**: eyebrows, step numbers, status labels, timestamps, compact metadata, the copyright line.
 
@@ -280,6 +280,19 @@ Diagrams (resource hub, flows, cycles, the ecosystem map) are inline SVG or HTML
 - Labels are real text in IBM Plex Sans; every node corresponds to a named concept from the wireframe.
 - Ownership indicators ("GLO stays with you", "Ownership changed") are pinned bars under the flow, styled as status, so they stay visible through the whole sequence.
 - A static or reduced-motion diagram shows the complete picture.
+- Where Gia is the center of a diagram (hub, ecosystem), she is shown as `.gia-core`: her photo (`assets/images/gia.webp`, PNG fallback, `alt="Gia"`) in a circle with a 1px `--gp-gold` ring and a soft gold glow, 180px wide and 140px in the vertical layout. Her name and role sit in a dark plate over the lower edge of the circle, never over her face.
+
+#### Pulse diagrams `[data-pulse]` (hub, ecosystem)
+
+- Wiring: one absolutely positioned SVG over the grid; every route is measured from the cards and the circle, so it starts at a card edge and ends at the circle (or the name plate, for routes from below) and is redrawn on resize. 1px `--gp-gold` at about 25% opacity, rounded corners; arrows where the wireframe has them.
+- Pulse: a short glowing comet (bright head, fading tail) runs along a wire; a small glowing dot lights at each junction and end as it passes.
+- Card status: a small indicator in the card's top-left corner spins while the pulse travels and turns into a gold check when it arrives.
+- Gia's ring flashes once when the work reaches her (ecosystem) or before she sends it out (hub).
+- **Playback rule**: when the diagram comes into view, its cycle plays 3 times, then stops on the final state (every check shown, wiring slightly brighter). Hovering the diagram with a mouse plays one more cycle. It pauses when it leaves the screen or the tab is hidden and resumes where it was; once it has finished, leaving the screen completely re-arms it for the next visit. Only transform, opacity and stroke-dashoffset are animated.
+- Reduced motion: no animation; the final state is shown at once.
+- Vertical layout at the component's breakpoint (hub 960px, ecosystem 860px): the cards above Gia join on a rail along one side, the cards below on the other; the same scenario plays.
+- Hub (GLO 02): Gia decides what each task needs, so pulses run out from Gia to the resources in pairs (Compute + Agents, Models + Research, Tools + Execution), about 8 s per cycle.
+- Ecosystem (How GLO Works 06): pulses run into Gia from You, Work requests and GLO capacity, Gia flashes, the pulse goes on to Deliverable, then the "After the work" paths light up one by one, about 9 s per cycle. Vertical order: You, Work requests, GLO capacity, Gia, Deliverable, After the work (grid areas only; the HTML order is unchanged).
 
 ## 9. Components
 
@@ -307,6 +320,8 @@ Live examples with real wireframe copy: `docs/components.html` (open it through 
 | Principle | `.principle`, `--center` | GLO 01/03, How GLO Works 02/06 | one short line the page wants remembered; Plex Sans 600 champagne |
 | Media frame | `figure.media-frame`, `__box`, `--placeholder`, `__note`, `--ratio` | heroes, final CTAs | placeholder keeps the layout and says what will go there |
 | Play-once video | `video[data-play-once]`, `data-delay`, `data-still`, `poster` | hero video of every page | plays once each time the hero comes into view, after a short pause (800 ms), from the first frame to the last, no loop; rewinds when it leaves the screen so it can play again on the next visit; poster = first frame; reduced motion: never plays and shows `data-still` (last frame) |
+| Gia core | `.gia-core`, `__photo`, `__plate`, `__name`, `__sub` (`__glow` added by script) | GLO 02, How GLO Works 06 | photo of Gia in a gold ring; name plate over the lower edge; section 8.6 |
+| Pulse diagram | `[data-pulse="<name>"]`, `.is-final`; script adds `.pulse-wires`, `.pulse-status`, `.pulse-hl` | GLO 02 (`hub`), How GLO Works 06 (`eco`) | wiring, pulses and card status from `js/components.js`; routes and scenario per diagram via `GiaPulse.define()` (hub in `js/components.js`, eco in the page script); playback rule in section 8.6 |
 | Ambient motion | `[data-motion]` → `.is-playing` | available for diagrams with slow motion (How GLO Works hero) | CSS animations inside run only while in view and never under reduced motion |
 | Pending button | `.btn--pending` (`span`, `aria-disabled="true"`) | "Learn about membership" | dashed, muted, not focusable; paired with a note saying the destination is to be confirmed |
 | Badge | `.badge--now`, `--approval`, `--next`, `--vision`, `--plain` | everywhere a capability or option has a status | Available now / With approval / Coming next / Vision; `--plain` for "Illustrative" |
@@ -315,7 +330,7 @@ Live examples with real wireframe copy: `docs/components.html` (open it through 
 | Pinned bar | `.flow-keep`, `--change` | under a flow | "Member B keeps their GLO the whole time"; `--change` when ownership changes |
 | Cycle return | `.flow-return` with `--n`, `__label` | How GLO Works 03 | bracket from the last node back to the first; a text line on mobile |
 | Steps line | `ol.steps-line > li.steps-line__item`, `__label`, `__who`, `.is-you` | GLO 07 | numbered circles on a line; champagne circles for the member's own steps |
-| Hub | `.hub`, `__side--left/--right`, `__node`, `__name`, `__desc`, `__core`, `__core-name`, `__core-sub` | GLO 02 | three nodes per side (`--rows`), orthogonal wiring; stacks with Gia on top at 960px |
+| Hub | `.hub[data-pulse="hub"]`, `__side--left/--right`, `__node`, `__name`, `__desc`, `__core.gia-core` | GLO 02 | three nodes per side, Gia in the center, pulse-diagram wiring; at 960px one column: Compute, Models, Tools, then Gia, then Agents, Research, Execution (replaces the wireframe's two compact columns) |
 | Accordion | `.accordion > details.acc`, `__sum`, `__icon`, `__body` | GLO 06 | native `details`; the same `name` on a group keeps one item open; open item has a gold border |
 | Ownership indicator | `.owner--keep`, `--change`, `--terms` | option cards, accordion, flows | always visible, never only in a tooltip |
 | Option card | `.options > article.option`, `__head`, `__name`, `__more`, `.option--conditional` | How GLO Works 04 | Use · Put it to work · Support · Transfer; details open on demand; conditional option has a dashed border |
@@ -337,7 +352,7 @@ Anything used on a single page lives in `css/pages/<page>.css`. If a second page
 - Text reveal (`.reveal`): 600ms, `translateY(24px)` to 0, opacity 0 to 1, `--ease`, once per element.
 - Product UI state changes (`.msg-in`): 450ms, 10px rise.
 - Hover feedback: 200–300ms, color, border or glow only; no hover transforms.
-- One orchestrated motion moment per page hero. Elsewhere, motion answers the visitor's action (choosing a tab, approving, opening an option).
+- One orchestrated motion moment per page hero. Elsewhere, motion answers the visitor's action (choosing a tab, approving, opening an option). Exception: pulse diagrams `[data-pulse]` play their cycle 3 times when they come into view, then rest on the final state (section 8.6).
 - Looping media pauses when out of view, loops seamlessly and looks complete at every frame.
 - No parallax or scroll hijacking beyond the approved Meet Gia hero.
 - Do not animate layout dimensions that push surrounding content.
@@ -458,7 +473,7 @@ css/shell.css                 header, mobile menu, progress, footer, logo
 css/pages/<page>.css          page-only sections
 
 js/site.js                    shell behavior; exposes window.GiaSite = { reduce, clamp, lerp }
-js/components.js              shared component behavior (approval sheet, looping video)
+js/components.js              shared component behavior (approval sheet, play-once video, ambient motion, pulse diagrams)
 js/pages/<page>.js            page behavior
 js/pages/meet-gia-frames.js   Meet Gia hero frame list
 
