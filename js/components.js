@@ -49,7 +49,8 @@
      [data-spotlight]  on a card: a soft gold glow follows a mouse pointer (.spot-on, --spot-x/--spot-y).
      [data-draw]       on a container: adds .is-drawn on each visit. SVG shapes inside (path, line, polyline, polygon,
                        circle, ellipse, rect) draw through stroke-dashoffset (skip one with .no-draw);
-                       .draw-x elements grow from the left (scaleX). On .flow, .steps-line and .path__steps the
+                       .draw-x elements grow from the left (scaleX). On .flow, .steps-line, .path__steps and
+                       .gc-timeline the
                        connectors open one after another (--draw-i per item; the arrowhead of a .flow follows its
                        line; a .flow-return right after a .flow opens after the last arrow, in CSS only).
      .card__art        an SVG in card art draws itself the same way, without an attribute: each time the
@@ -309,8 +310,8 @@
   };
   document.querySelectorAll('[data-draw]').forEach((box) => {
     drawPrep(box);
-    // .flow, .steps-line and .path__steps draw their connectors (pseudo-elements) one after another, by item order.
-    if (box.matches('.flow, .steps-line, .path__steps')) [...box.children].forEach((li, i) => li.style.setProperty('--draw-i', i));
+    // .flow, .steps-line, .path__steps and .gc-timeline draw their connectors (pseudo-elements) one after another, by item order.
+    if (box.matches('.flow, .steps-line, .path__steps, .gc-timeline')) [...box.children].forEach((li, i) => li.style.setProperty('--draw-i', i));
     // Removing .is-drawn is instant: the transitions live only on .is-drawn.
     replay(box, () => box.classList.add('is-drawn'), () => box.classList.remove('is-drawn'));
   });

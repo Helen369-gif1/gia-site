@@ -71,6 +71,12 @@
 .gc-timeline__when { grid-column: 1; font-family: var(--font-mono); font-size: 11px; color: var(--gp-text-muted); }
 .gc-timeline__what { grid-column: 1; font-size: 15px; color: var(--gp-text); }
 .gc-timeline .status { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
+/* .gc-timeline[data-draw]: the lines between the dots open from the top, one after another
+   (--draw-i from js/components.js), like .path__steps[data-draw]; the dots do not move. */
+@media (prefers-reduced-motion: no-preference) {
+  .gc-timeline.draw-on > li::after { transform: scaleY(0); transform-origin: center top; }
+  .gc-timeline.draw-on.is-drawn > li::after { transform: none; transition: transform .45s var(--ease) calc(var(--draw-i, 0) * .2s); }
+}
 .gc-comp-notes { margin-top: 56px; display: grid; gap: 12px; text-align: center; }
 @media (max-width: 960px) { .gc-comp { grid-template-columns: minmax(0, 1fr); } }
 
@@ -94,6 +100,21 @@
   .gc-end { grid-template-columns: minmax(0, 1fr); }
   .gc-end__arrow { width: 1px; height: 32px; justify-self: center; }
   .gc-end__arrow::after { right: -4px; top: auto; bottom: -1px; border-left: 4.5px solid transparent; border-right: 4.5px solid transparent; border-top: 7px solid var(--gp-gold-mid); border-bottom: 0; }
+}
+/* .gc-end[data-draw]: the arrow line opens (scaleX from the left; scaleY from the top where it is vertical),
+   its arrowhead (::after) appears after it, like a .flow arrow; then the capacity bar fills from the left.
+   No [data-stagger] here: it would override the children's transform. */
+@media (prefers-reduced-motion: no-preference) {
+  .gc-end.draw-on .gc-end__arrow { transform: scaleX(0); transform-origin: left center; }
+  .gc-end.draw-on .gc-end__arrow::after { opacity: 0; }
+  .gc-end.draw-on .gc-cap i { transform: scaleX(0); transform-origin: left center; }
+  .gc-end.draw-on.is-drawn .gc-end__arrow { transform: none; transition: transform .45s var(--ease); }
+  .gc-end.draw-on.is-drawn .gc-end__arrow::after { opacity: 1; transition: opacity .15s linear .4s; }
+  .gc-end.draw-on.is-drawn .gc-cap i { transform: none; transition: transform 1s var(--ease) .55s; }
+  /* After the scaleX rule (same specificity, order decides). */
+  @media (max-width: 768px) {
+    .gc-end.draw-on .gc-end__arrow { transform: scaleY(0); transform-origin: center top; }
+  }
 }
 
 /* ===== 09 Final ===== */
