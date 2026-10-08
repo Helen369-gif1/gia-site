@@ -57,6 +57,8 @@
 
 /* ===== 02 Three-layer model ===== */
 .layers { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; max-width: 1040px; margin-inline: auto; }
+/* The list resets its margins; keep the shared heading-to-component distance when .gap-major is set. */
+.layers.gap-major { margin-top: clamp(64px, 7vw, 96px); }
 .layer { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px 32px; align-items: center; padding: 24px 28px; background: var(--gp-surface); border: 1px solid var(--gp-line); border-radius: 8px; }
 .layer--key { padding-block: 36px; border-color: var(--gp-glass-border-active); background: rgba(242, 179, 90, .05); }
 .layer__role { display: grid; gap: 4px; }
