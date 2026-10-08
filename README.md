@@ -35,11 +35,13 @@ Introducing GLO also links straight to How GLO Works from its options section, a
     css/components.css         shared components: glass UI, chat atoms, status, card, split, log, tiers, task workspace,
                                final CTA, and (stage 3) page hero, badge, flow, steps line, hub, accordion,
                                option card, ownership indicator, terms sheet, approval sheet, is/is not, notice,
-                               Gia core (photo in a gold ring), pulse diagram
+                               Gia core (photo in a gold ring), pulse diagram, card art (.card__art), quiet effects
     css/shell.css              header, mobile menu, scroll progress, footer, logo
     css/pages/<page>.css       page-only sections (meet-gia, glo, global-connections, how-glo-works)
     js/components.js           shared component behavior: approval sheet, play-once hero video (pages 2-4),
-                               pulse diagrams [data-pulse] (wiring, pulses, card status; the hub's routes and scenario)
+                               pulse diagrams [data-pulse] (wiring, pulses, card status; the hub's routes and scenario),
+                               quiet effects switched on by attributes: [data-parallax], [data-stagger], [data-spotlight],
+                               [data-draw], [data-shine] (design system 9.2 and 10.1; demos in docs/components.html)
     js/site.js                 shared shell: menu, scroll progress, active section, reveal; exposes window.GiaSite
     js/pages/meet-gia.js       Meet Gia: hero scroll video, section 03 video, In action, Memory, permissions, approval, waitlist
     js/pages/meet-gia-frames.js  list of Meet Gia hero video frames
@@ -49,6 +51,8 @@ Introducing GLO also links straight to How GLO Works from its options section, a
     assets/video/              works-with-you.mp4, the Meet Gia section 03 video (plays once per visit)
     assets/images/             optimized photos (gia.webp + gia.png fallback, 400x400 face crop of
                                assets/source/gia-original.png) and the section 03 first/last frames
+    assets/art/                source SVGs of the card line drawings (.card__art); pages inline the same SVG so
+                               currentColor works (glo-uses-*: Introducing GLO #what-it-enables)
     assets/source/             originals: videos, persona photos, logos as supplied
     docs/                      design system, color system, wireframes
     docs/components.html       live reference of every shared component (open via the local server)

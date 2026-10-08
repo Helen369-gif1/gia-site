@@ -30,7 +30,28 @@
      It pauses when it leaves the screen or the tab is hidden and resumes when back; after the final
      state, leaving the screen completely re-arms it for the next visit.
      A def's routes read CSS --pulse-layout: vertical (set by the component at its own breakpoint).
-     Under reduced motion it never animates and shows the final state. */
+     Under reduced motion it never animates and shows the final state.
+
+   Quiet effects (design system 10.1). One shared IntersectionObserver helper (watch). Stagger, draw
+   (with card art) and shine replay on every visit, like the play-once video (replay): they play when the
+   block comes into view, and only after it has left the screen completely do they quietly return to the
+   start state, ready for the next visit; while any part is visible they never restart. Parallax follows
+   the scroll while the frame is on screen. Hiding start states exist only once the script has added its
+   class, and CSS drops them under reduced motion, so without JS or with reduced motion everything
+   shows its final state. A change of the reduced-motion setting applies without a reload.
+     [data-parallax]   on .media-frame__box, .final__media or .page-hero__media: the img / video inside
+                       is scaled to 1.18 and moves up to ±8% of the frame height (±4% at 768px and below)
+                       while the frame is on screen. Optional value: a smaller maximum, e.g. "0.05".
+                       One requestAnimationFrame update per scroll or resize for the whole page.
+     [data-stagger]    on a grid: its children appear 120ms apart (.stagger-on, then .is-in).
+                       Not on the same element as .reveal.
+     [data-spotlight]  on a card: a soft gold glow follows a mouse pointer (.spot-on, --spot-x/--spot-y).
+     [data-draw]       on a container: adds .is-drawn on each visit. SVG shapes inside (path, line, polyline, polygon,
+                       circle, ellipse, rect) draw through stroke-dashoffset (skip one with .no-draw);
+                       .draw-x elements grow from the left (scaleX).
+     .card__art        an SVG in card art draws itself the same way, without an attribute: each time the
+                       card comes into view, parts 0.1s apart; in a [data-stagger] grid, after its card appears.
+     [data-shine]      on a .principle: one pass of light per visit (.is-shining), then the solid color. */
 (() => {
   const { reduce } = window.GiaSite || { reduce: window.matchMedia('(prefers-reduced-motion: reduce)').matches };
 
@@ -151,6 +172,163 @@
         }
       });
     }, { threshold: 0.5 }).observe(v);
+  });
+
+  /* ---------- Quiet effects ---------- */
+  const motionMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const onChange = (mq, fn) => { if (mq.addEventListener) mq.addEventListener('change', fn); else mq.addListener(fn); };
+
+  // Shared IntersectionObserver helper: one observer per (margin, threshold).
+  // once: the callback runs the first time the element is in view, then it is dropped.
+  const pool = new Map();
+  const watch = (el, cb, { margin = '0px 0px -10% 0px', threshold = 0, once = true } = {}) => {
+    const key = margin + '|' + threshold;
+    let o = pool.get(key);
+    if (!o) {
+      const subs = new Map();
+      const io = new IntersectionObserver((entries) => entries.forEach((en) => {
+        const list = subs.get(en.target); if (!list) return;
+        list.forEach((s) => {
+          if (s.once && !en.isIntersecting) return;
+          s.cb(en);
+          if (s.once) list.delete(s);
+        });
+        if (!list.size) { subs.delete(en.target); io.unobserve(en.target); }
+      }), { rootMargin: margin, threshold });
+      o = { io, subs }; pool.set(key, o);
+    }
+    if (!o.subs.has(el)) { o.subs.set(el, new Set()); o.io.observe(el); }
+    o.subs.get(el).add({ cb, once });
+  };
+  // Replays on every visit, like the play-once video: play() when the element comes into view;
+  // reset() quietly once it has left the screen completely (not a pixel visible), which re-arms it.
+  // While any part of it stays visible it does not play again, so nothing flickers at the edge.
+  const replay = (el, play, reset, margin = '0px 0px -10% 0px') => {
+    let played = false;
+    watch(el, (en) => { if (en.isIntersecting && !played) { played = true; play(); } }, { margin, once: false });
+    watch(el, (en) => { if (!en.isIntersecting && played) { played = false; reset(); } }, { margin: '0px', once: false });
+  };
+
+  // Parallax
+  const PARALLAX_SCALE = 1.18, PARALLAX_MAX = 0.08;   // the scale leaves 9% on each side, so the 8% shift never shows an edge
+  const smallMQ = window.matchMedia('(max-width: 768px)');
+  const frames = [...document.querySelectorAll('[data-parallax]')]
+    .filter((el) => el.matches('.media-frame__box, .final__media, .page-hero__media') && !el.closest('.gia-core, .card__art'))
+    .map((el) => ({ el, media: el.querySelector('img, video'), max: Math.min(PARALLAX_MAX, parseFloat(el.dataset.parallax) || PARALLAX_MAX), y: null }))
+    .filter((f) => f.media);
+  const shown = new Set();
+  let pRaf = 0;
+  const parallaxTick = () => {
+    pRaf = 0;
+    if (motionMQ.matches) return;
+    const vh = window.innerHeight, k = smallMQ.matches ? 0.5 : 1;
+    const rects = [...shown].map((f) => [f, f.el.getBoundingClientRect()]);   // read everything, then write
+    rects.forEach(([f, r]) => {
+      const p = Math.max(-1, Math.min(1, (r.top + r.height / 2 - vh / 2) / ((vh + r.height) / 2)));
+      const y = Math.round(-p * f.max * k * r.height * 10) / 10;
+      if (y !== f.y) { f.y = y; f.media.style.transform = `translate3d(0, ${y}px, 0) scale(${PARALLAX_SCALE})`; }
+    });
+  };
+  const parallaxQueue = () => { if (!pRaf && shown.size && !motionMQ.matches) pRaf = requestAnimationFrame(parallaxTick); };
+  const parallaxReset = () => frames.forEach((f) => { f.y = null; f.media.style.transform = ''; });
+  frames.forEach((f) => {
+    f.el.classList.add('parallax-on');
+    f.media.classList.add('parallax-media');
+    watch(f.el, (en) => { if (en.isIntersecting) shown.add(f); else shown.delete(f); parallaxQueue(); }, { margin: '0px', once: false });
+  });
+  if (frames.length) {
+    window.addEventListener('scroll', parallaxQueue, { passive: true });
+    window.addEventListener('resize', parallaxQueue, { passive: true });
+    onChange(motionMQ, () => { if (motionMQ.matches) parallaxReset(); else parallaxQueue(); });
+  }
+
+  // Staggered entry
+  document.querySelectorAll('[data-stagger]').forEach((grid) => {
+    const kids = [...grid.children];
+    if (!kids.length) return;
+    kids.forEach((k, i) => k.style.setProperty('--stagger-i', i));
+    grid.classList.add('stagger-on');
+    let timer = 0;
+    replay(grid, () => {
+      grid.classList.add('is-in');
+      grid.giaStaggerAt = performance.now();
+      grid.dispatchEvent(new CustomEvent('gia:stagger-in'));
+      // After the last child arrives, drop the classes so later hover transitions have no delay.
+      timer = setTimeout(() => grid.classList.remove('stagger-on', 'is-in'), (kids.length - 1) * 120 + 800);
+    }, () => {
+      // Back to the start state; transitions live only on .is-in, so this is instant.
+      clearTimeout(timer);
+      grid.giaStaggerAt = 0;
+      grid.classList.remove('is-in');
+      grid.classList.add('stagger-on');
+    });
+  });
+
+  // Spotlight
+  document.querySelectorAll('[data-spotlight]').forEach((card) => {
+    card.classList.add('spot-on');
+    let raf = 0, cx = 0, cy = 0;
+    card.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse' || motionMQ.matches) return;
+      cx = e.clientX; cy = e.clientY;
+      if (!raf) raf = requestAnimationFrame(() => {
+        raf = 0;
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--spot-x', (cx - r.left).toFixed(0) + 'px');
+        card.style.setProperty('--spot-y', (cy - r.top).toFixed(0) + 'px');
+      });
+    });
+  });
+
+  // Line drawing
+  const DRAW_SHAPES = 'svg path, svg line, svg polyline, svg polygon, svg circle, svg ellipse, svg rect';
+  const drawPrep = (box, step) => {
+    [...box.querySelectorAll(DRAW_SHAPES)].filter((p) => !p.closest('.no-draw')).forEach((p, i) => {
+      p.setAttribute('pathLength', '1');
+      p.classList.add('draw-path');
+      if (step) p.style.setProperty('--draw-delay', (i * step).toFixed(2) + 's');
+    });
+    box.classList.add('draw-on');
+  };
+  document.querySelectorAll('[data-draw]').forEach((box) => {
+    drawPrep(box);
+    // Removing .is-drawn is instant: the transitions live only on .is-drawn.
+    replay(box, () => box.classList.add('is-drawn'), () => box.classList.remove('is-drawn'));
+  });
+
+  // Card art draws itself when its card comes into view, parts 0.1s apart.
+  // In a [data-stagger] grid it starts once its own card has appeared.
+  const STAGGER_STEP = 120, ART_AFTER_CARD = 300;
+  document.querySelectorAll('.card__art').forEach((art) => {
+    if (!art.querySelector('svg') || art.closest('[data-draw]')) return;
+    drawPrep(art, 0.1);
+    const grid = art.closest('[data-stagger]');
+    const kid = grid && [...grid.children].find((k) => k.contains(art));
+    let timer = 0;
+    const draw = () => art.classList.add('is-drawn');
+    const wait = () => { timer = setTimeout(draw, Math.max(0, grid.giaStaggerAt + [...grid.children].indexOf(kid) * STAGGER_STEP + ART_AFTER_CARD - performance.now())); };
+    replay(art, () => {
+      if (!kid || motionMQ.matches) draw();
+      else if (grid.giaStaggerAt) wait();
+      else if (grid.classList.contains('stagger-on')) grid.addEventListener('gia:stagger-in', wait, { once: true });
+      else draw();
+    }, () => {
+      clearTimeout(timer);
+      if (grid) grid.removeEventListener('gia:stagger-in', wait);
+      art.classList.remove('is-drawn');
+    });
+  });
+
+  // Shine
+  document.querySelectorAll('[data-shine]').forEach((el) => {
+    let timer = 0;
+    const end = () => { clearTimeout(timer); el.classList.remove('is-shining'); };
+    replay(el, () => {
+      if (motionMQ.matches) return;
+      el.classList.add('is-shining');
+      el.addEventListener('animationend', end, { once: true });
+      timer = setTimeout(end, 2400);   // in case the animation never runs
+    }, () => { el.removeEventListener('animationend', end); end(); }, '0px 0px -15% 0px');
   });
 
   /* ---------- Pulse diagram ---------- */

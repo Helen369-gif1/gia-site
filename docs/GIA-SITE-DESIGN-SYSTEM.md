@@ -37,7 +37,7 @@ Avoid:
 - a light theme or light sections (the site is dark-only);
 - coin stacks, medals, laurel wreaths, token-price charts, tickers, trading red/green or anything that reads as a crypto exchange or a game;
 - gradients as large background fills (the one approved exception is `.section--glow`, see 6.1);
-- decoration that means nothing once motion stops;
+- decoration that means nothing once motion stops (small drawings in cards are allowed when each one conveys its own card's concept and still reads without motion, see 8.1);
 - heavy drop shadows and ornamental cards;
 - inconsistent section padding.
 
@@ -227,6 +227,17 @@ Approved direction (replaces the half-text, half-media split in the wireframe dr
 - No shadow. Gold is never the full card background.
 - A gold or champagne border marks the one card the visitor should act on.
 
+#### Card art `.card__art` (optional)
+
+- Placement: the first child of the card, above the badge and the title. The area is 96px high (72px ≤560px); the drawing is aligned left. An empty or missing slot takes no space (no height, no margin).
+- Format: inline SVG or `<img>`; SVG is preferred. Line drawing at 1.5px stroke, colored `--gp-gold` / `--gp-champagne` through `currentColor`, transparent background, in the same graphic language as the site's diagrams (8.6).
+- The forbidden motifs of section 2 apply here too (coin stacks, growth charts, tickers, medals and the like). Each drawing conveys its own card's concept and reads without motion.
+- A decorative drawing gets `aria-hidden="true"` (an `<img>` also gets empty `alt`).
+- Use it on: Introducing GLO `#what-it-enables` cards; How GLO Works `#your-options` option cards (one shared set of marks for Use, Put it to work, Support and Transfer, the same on both pages); the role marks in `#three-layer` (for Gia, her photo in a gold ring, as `.gia-core`); small icons in flow nodes (`.flow`).
+- Do not use it on: Is / is not, project terms cards, the approval sheet or any other legally significant block.
+- Motion: an SVG drawing draws itself each time the card comes into view, and is reset after the card has left the screen completely (1.2s, parts about 0.1s apart; in a `[data-stagger]` grid it starts after its own card has appeared). No attribute is needed; the drawing must read complete without motion and shows complete at once under reduced motion (section 10.1).
+- Card art never gets parallax (section 10).
+
 ### 8.2 Glass panels (product UI only)
 
 - `.glass`: `--gp-glass` background, 18px backdrop blur, `--gp-glass-border`, radius 16px; `.is-active` uses `--gp-glass-border-active`. A solid `--gp-surface` fallback applies when blur is not supported.
@@ -272,6 +283,7 @@ Every option (Use, Put it to work, Support, Transfer) carries a status badge on 
 - Photos in a media frame use `<picture>`: a WebP `source` and a JPEG (or PNG) fallback `img`, each with a `srcset` of two sizes (about 800px and 1600px on the longer side, or the original if smaller) and `sizes` matching the column, plus `width`/`height`. The image fills the frame with `object-fit: cover`; set `object-position` per photo when the crop must keep a subject in frame. Media near the top of the page: `fetchpriority="high"`, no lazy loading; otherwise `loading="lazy"`. The versions are made with `tools/optimize-images.py`.
 - Every new photo goes through `tools/optimize-images.py`, never by hand: drop the original into `assets/images/` and run `python3 tools/optimize-images.py`. It moves the original to `assets/source/` (an existing original is never overwritten) and writes `<name>-800` and `<name>-1600` (the real size if smaller, never upscaled) as WebP (quality 78) and JPEG fallback (`-q:v 4`). Already processed photos are skipped. Do not change these quality settings per photo.
 - Optimized files are WebP in `assets/images/` or `assets/video/`; originals stay in `assets/source/`.
+- Photos and videos in `.media-frame`, `.final__media` and `.page-hero__media` may use light parallax (`[data-parallax]`); the rule is in section 10.
 
 ### 8.6 Diagrams
 
@@ -341,6 +353,14 @@ Live examples with real wireframe copy: `docs/components.html` (open it through 
 | Important information | `aside.notice`, `__title`, `__list` | How GLO Works 07 | calm, readable; not fine print |
 | Final CTA | `.final`, `.final__h`, `.uses`, `.final__media`, `.final__img` | every page | moved here from the Meet Gia stylesheet |
 | Tabs | `.tabs`, `.tab[role=tab][aria-selected]` | Meet Gia 04, Global Connections 05 | moved here from the Meet Gia stylesheet; arrow keys move between tabs in the page script |
+| Card art | `.card__art` > inline `svg` or `img` | section 8.1 lists where | 96px area (72px ≤560px), aligned left, `currentColor` gold, 1.5px stroke defaults on the SVG; a slot with no `svg`/`img` is not displayed |
+| Parallax | `[data-parallax]` (optional value: a smaller maximum, e.g. `"0.05"`); script adds `.parallax-on`, `.parallax-media` | `.media-frame__box`, `.final__media`, `.page-hero__media` only | section 10.1; the frame gets `overflow: hidden`; on `.final__media` the border and radius move from the media to the frame, so a parallax `.final__media` holds no caption; one rAF update per scroll/resize, only for frames on screen |
+| Staggered entry | `[data-stagger]` on a grid; script adds `.stagger-on`, `.is-in`, `--stagger-i` | card grids | children appear 120ms apart (24px rise, blur 4px, 700ms) on every visit; never on an element that is also `.reveal` |
+| Spotlight | `[data-spotlight]` on a card; script adds `.spot-on`, `--spot-x/--spot-y` | marketing cards | 360px radial glow of `--gp-gold` at 14% opacity; uses the card's own `::before`, so only on elements without one (free on `.card`); mouse only |
+| Line drawing | `[data-draw]` on a container → `.is-drawn`; inside: SVG `path`/`line`/`polyline`/`polygon`/`circle`/`ellipse`/`rect` (script adds `pathLength="1"` and `.draw-path`; `.no-draw` opts out) and `.draw-x` elements; `--draw-delay` per part | flow arrows, timelines, step lines, cycle return (wired in step 5) | stroke-dashoffset in 1.2s, `.draw-x` scaleX from the left in 1s; not around pulse diagrams or already dashed strokes |
+| Shine | `[data-shine]` on `.principle` → `.is-shining` during the pass | gold summary lines | one 1.8s pass of light (band 40% / 50% / 60% of the gradient) each time it comes into view (re-armed after it has left the screen completely), then the plain solid color; the text shadow is off during the pass |
+
+The quiet effects share one IntersectionObserver helper in `js/components.js`. Stagger, line drawing (card art included) and shine play each time their block comes into view and re-arm after it has left the screen completely (section 10.1); parallax keeps following the scroll. Their hiding start states apply only after the script has added its class and only under `prefers-reduced-motion: no-preference`, so without JS or with reduced motion the final state shows; switching the setting applies without a reload.
 
 Utility: `[hidden]` always hides, even on elements that set their own `display`.
 
@@ -353,11 +373,25 @@ Anything used on a single page lives in `css/pages/<page>.css`. If a second page
 - Text reveal (`.reveal`): 600ms, `translateY(24px)` to 0, opacity 0 to 1, `--ease`, once per element.
 - Product UI state changes (`.msg-in`): 450ms, 10px rise.
 - Hover feedback: 200–300ms, color, border or glow only; no hover transforms.
-- One orchestrated motion moment per page hero. Elsewhere, motion answers the visitor's action (choosing a tab, approving, opening an option). Exception: pulse diagrams `[data-pulse]` play their cycle 3 times when they come into view, then rest on the final state (section 8.6).
-- Looping media pauses when out of view, loops seamlessly and looks complete at every frame.
-- No parallax or scroll hijacking beyond the approved Meet Gia hero.
+- One orchestrated motion moment per page hero. Elsewhere, motion answers the visitor's action (choosing a tab, approving, opening an option) or is one of the quiet effects below. Exception: pulse diagrams `[data-pulse]` play their cycle 3 times when they come into view, then rest on the final state (section 8.6).
+- Videos never loop: they use `video[data-play-once]` (9.2), play once per visit to the screen, rest on their last frame and look complete at every frame.
+- Quiet effects that play on entry (staggered entry, line drawing with card art, shine) follow the same per-visit rule: they play each time their block comes into view and rest on the final state; only after the block has left the screen completely (not a pixel visible) do they quietly return to the start state, ready for the next visit. While any part stays visible they never restart. The text reveal stays once per element.
+- No scroll hijacking beyond the approved Meet Gia hero.
 - Do not animate layout dimensions that push surrounding content.
-- Under `prefers-reduced-motion: reduce`: no reveal, no entry animation, no transitions, videos do not play, every animation shows its complete final state.
+
+### 10.1 Quiet effects
+
+Effects inspired by React Bits are ported to vanilla JS and CSS in `js/components.js` and `css/components.css`. No React, no build step, no new dependencies.
+
+- **Parallax** (`[data-parallax]`): only on photos and videos inside `.media-frame`, `.final__media` and `.page-hero__media`. The media is scaled up to `scale(1.18)` and moves vertically by at most ±8% of the frame height (±4% at 768px and below); the scale leaves 9% on each side, so the frame's edges never show. Only `transform` is animated, through `requestAnimationFrame`, and only while the frame is on screen. Never on: the Meet Gia hero (scroll-scrubbed canvas), Gia's photo in `.gia-core`, card art (`.card__art`), glass panels of the product UI.
+- **Staggered card entry**: cards in a grid appear one after another, 120ms apart: `translateY(24px)` to 0, opacity 0 to 1, `blur(4px)` to 0, 700ms, `--ease`; plays on every visit and re-arms after the grid has left the screen completely.
+- **Spotlight on hover**: a soft gold radial glow (360px, `--gp-gold` at 14% opacity) follows the pointer inside a card, with no transform. Marketing cards only, and only on devices with a mouse (`@media (hover: hover)`).
+- **Line drawing**: flow arrows, timelines, vertical step lines and the cycle return draw each time they come into view (`stroke-dashoffset` or `scaleX`), in 1.2s or less, and re-arm after leaving the screen completely. Every SVG shape is drawn (path, line, polyline, polygon, circle, ellipse, rect). Card art (`.card__art`, 8.1) draws itself the same way without an attribute: each time its card comes into view, parts about 0.1s apart, after the card's own staggered entry when it has one.
+- **Shine**: one pass of light (1.8s) across the gold summary lines (`.principle`) each time they come into view; it re-arms only after the line has left the screen completely.
+
+### 10.2 Reduced motion
+
+Under `prefers-reduced-motion: reduce`: no reveal, no entry animation, no transitions, videos do not play, no parallax, no staggered entry, no spotlight, no line drawing, no shine; every element shows its complete final state at once.
 
 ## 11. Responsive system
 
@@ -474,7 +508,7 @@ css/shell.css                 header, mobile menu, progress, footer, logo
 css/pages/<page>.css          page-only sections
 
 js/site.js                    shell behavior; exposes window.GiaSite = { reduce, clamp, lerp }
-js/components.js              shared component behavior (approval sheet, play-once video, ambient motion, pulse diagrams)
+js/components.js              shared component behavior (approval sheet, play-once video, ambient motion, quiet effects, pulse diagrams)
 js/pages/<page>.js            page behavior
 js/pages/meet-gia-frames.js   Meet Gia hero frame list
 
@@ -532,7 +566,8 @@ Before reporting a page or section complete:
 - Gia is visually larger than GLO in every diagram.
 - No content is clipped and nothing scrolls sideways at 1440, 1024, 768 and 375px.
 - Header and mobile menu work at 1101px and 1100px; the current page and section are marked.
-- Reduced-motion mode shows complete static compositions.
+- Reduced-motion mode shows complete static compositions: parallax, staggered entry, spotlight, line drawing and shine are all off (10.2).
+- An empty or missing `.card__art` leaves no gap above the badge or title.
 - Keyboard: every control is reachable, focus is visible, Escape closes the menu.
 - Content rules in section 15 hold.
 - Other pages are unchanged; the browser console has no errors.

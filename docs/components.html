@@ -261,6 +261,81 @@
   </div>
 </section>
 
+<section class="sg">
+  <div class="container">
+    <p class="sg__name">.card__art + [data-spotlight]</p>
+    <p class="sg__use">Optional line drawing above the title (96px area, 72px on phones, aligned left, gold through currentColor). It draws itself each time the card comes into view, parts 0.1s apart. The second card has an empty slot, which takes no space. With a mouse, a soft gold glow follows the pointer inside each card. Test drawings only; the real marks come with step 5.</p>
+    <p style="margin:0 0 24px"><button class="btn btn--ghost btn--sm" type="button" data-sg-replay="#sg-art">Replay</button></p>
+    <div class="cards cards--3" id="sg-art">
+      <article class="card card--flex" data-spotlight>
+        <div class="card__art"><svg viewBox="0 0 96 96" aria-hidden="true" focusable="false"><circle cx="48" cy="48" r="20"/><path d="M8 48h20M68 48h20M48 8v20M48 68v20"/></svg></div>
+        <h3 class="h4">Card with art</h3><p class="small">Inline SVG, 1.5px stroke, transparent background.</p>
+      </article>
+      <article class="card card--flex" data-spotlight>
+        <div class="card__art"></div>
+        <h3 class="h4">Card without art</h3><p class="small">The empty slot is not displayed, so the title starts at the top.</p>
+      </article>
+      <article class="card" data-spotlight>
+        <div class="card__art"><svg viewBox="0 0 144 96" aria-hidden="true" focusable="false"><rect x="8" y="24" width="48" height="48" rx="8"/><path d="M64 48h32"/><path d="M90 42l6 6-6 6"/><rect x="104" y="32" width="32" height="32" rx="16"/></svg></div>
+        <h3 class="h4">Plain card</h3><p class="small">A wider drawing in a card without .card--flex.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="sg section--deep">
+  <div class="container">
+    <p class="sg__name">[data-stagger] on .cards</p>
+    <p class="sg__use">Cards appear one after another, 120ms apart, each time the grid comes into view (scroll it fully off screen and back to replay).</p>
+    <div class="cards cards--4" data-stagger>
+      <article class="card" data-spotlight><h3 class="h4">Use</h3><p class="small">First card.</p></article>
+      <article class="card" data-spotlight><h3 class="h4">Put it to work</h3><p class="small">Second card.</p></article>
+      <article class="card" data-spotlight><h3 class="h4">Support</h3><p class="small">Third card.</p></article>
+      <article class="card" data-spotlight><h3 class="h4">Transfer</h3><p class="small">Fourth card.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="sg">
+  <div class="container">
+    <p class="sg__name">[data-draw]: SVG lines and .draw-x</p>
+    <p class="sg__use">Draws each time it comes into view: SVG path and line through stroke-dashoffset, .draw-x elements grow from the left. --draw-delay staggers parts.</p>
+    <div data-draw style="display:grid;gap:32px;max-width:720px">
+      <svg viewBox="0 0 720 80" width="720" height="80" style="width:100%;height:auto;stroke:var(--gp-gold-mid);fill:none;stroke-width:1.5" aria-hidden="true" focusable="false">
+        <path d="M8 60 H240 Q256 60 256 44 V36 Q256 20 272 20 H712"/>
+        <line x1="8" y1="76" x2="712" y2="76" style="--draw-delay:.3s;stroke:var(--gp-line)"/>
+      </svg>
+      <div class="draw-x" style="height:1px;background:var(--gp-gold-mid)"></div>
+      <div style="height:8px;border-radius:999px;background:var(--gp-surface-2)"><div class="draw-x" style="--draw-delay:.2s;width:60%;height:100%;border-radius:inherit;background:var(--gp-gold-mid)"></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sg section--deep">
+  <div class="container">
+    <p class="sg__name">[data-shine] on .principle</p>
+    <p class="sg__use">One pass of light across the line each time it comes into view; then the solid champagne color.</p>
+    <p class="principle principle--center" data-shine>GLO provides the capacity. Gia puts it to work.</p>
+  </div>
+</section>
+
+<section class="sg">
+  <div class="container final">
+    <div>
+      <p class="sg__name">[data-parallax] on .media-frame__box</p>
+      <p class="sg__use">The photo is scaled to 1.18 and moves by at most 8% of the frame height as the page scrolls (4% at 768px and below); the frame clips it. Also on .final__media and .page-hero__media.</p>
+    </div>
+    <figure class="media-frame" style="--ratio:16/9">
+      <div class="media-frame__box" data-parallax>
+        <picture>
+          <source type="image/webp" srcset="../assets/images/final-glo-800.webp 800w, ../assets/images/final-glo-1600.webp 1600w" sizes="(max-width: 960px) 100vw, 560px">
+          <img src="../assets/images/final-glo-1600.jpg" srcset="../assets/images/final-glo-800.jpg 800w, ../assets/images/final-glo-1600.jpg 1600w" sizes="(max-width: 960px) 100vw, 560px" width="1600" height="900" loading="lazy" decoding="async" alt="">
+        </picture>
+      </div>
+    </figure>
+  </div>
+</section>
+
 <section class="sg section--deep">
   <div class="container final">
     <div>
@@ -269,13 +344,27 @@
       <ul class="uses"><li>More resources for complex research and analysis.</li><li>More tools and coordinated capabilities when a task requires them.</li><li>More capacity for longer or more demanding authorized work.</li></ul>
       <div class="btn-row btn-row--stack" style="margin-top:40px"><a class="btn btn--primary" href="#main">See how Global Connections works</a><a class="btn btn--secondary" href="#main">Learn about membership</a></div>
     </div>
-    <figure class="media-frame media-frame--placeholder" style="--ratio:16/9">
-      <div class="media-frame__box"><p class="media-frame__note"><b>Photo</b>Gia in a warm setting with a finished briefing beside her.</p></div>
+    <figure class="media-frame" style="--ratio: 16 / 9">
+      <div class="media-frame__box">
+        <picture>
+          <source type="image/webp" srcset="../assets/images/final-glo-800.webp 800w, ../assets/images/final-glo-1600.webp 1600w" sizes="(max-width: 960px) 100vw, 560px">
+          <img src="../assets/images/final-glo-1600.jpg" srcset="../assets/images/final-glo-800.jpg 800w, ../assets/images/final-glo-1600.jpg 1600w" sizes="(max-width: 960px) 100vw, 560px" width="1600" height="900" loading="lazy" decoding="async" alt="Gia at her desk in the evening, beside a workspace panel showing completed work">
+        </picture>
+      </div>
     </figure>
   </div>
 </section>
 </main>
 <script src="../js/site.js"></script>
 <script src="../js/components.js"></script>
+<script>
+  /* Reference page only: Replay redraws the card art in the target block (silent reset, then draw). */
+  document.querySelectorAll('[data-sg-replay]').forEach((btn) => btn.addEventListener('click', () => {
+    const arts = document.querySelectorAll(btn.dataset.sgReplay + ' .card__art.draw-on');
+    arts.forEach((a) => a.classList.remove('is-drawn'));
+    void document.body.offsetWidth;
+    arts.forEach((a) => a.classList.add('is-drawn'));
+  }));
+</script>
 </body>
 </html>

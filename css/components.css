@@ -200,6 +200,16 @@
 @media (max-width: 768px) { .cards--2 { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 560px) { .cards--4 { grid-template-columns: minmax(0, 1fr); } .cards > .card { padding: 24px; } }
 
+/* ===== Card art (optional, first child of a card; DS 8.1) =====
+   96px area (72px at 560px and below), drawing aligned left, line art in currentColor.
+   A slot without an svg or img takes no space. */
+.card__art { display: flex; align-items: center; justify-content: flex-start; height: 96px; margin-bottom: 20px; color: var(--gp-gold); }
+.card--flex > .card__art { margin-bottom: 8px; } /* plus the card's 12px gap */
+.card__art > svg { display: block; height: 100%; width: auto; max-width: 100%; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.card__art > img { display: block; width: auto; height: auto; max-height: 100%; max-width: 100%; }
+.card__art:not(:has(svg, img)) { display: none; }
+@media (max-width: 560px) { .card__art { height: 72px; } }
+
 /* ===== Flow: boxes joined by arrows (left to right; top to bottom at 768px and below) ===== */
 .flow { --flow-gap: 36px; list-style: none; margin: 0; padding: 0; display: flex; gap: var(--flow-gap); counter-reset: flow; }
 .flow__node {
@@ -413,6 +423,58 @@
 .notice__list li { position: relative; padding-left: 20px; font-size: 15px; line-height: 1.55; color: var(--gp-text-2); }
 .notice__list li::before { content: ""; position: absolute; left: 0; top: .75em; width: 8px; height: 1px; background: var(--gp-gold-mid); }
 @media (max-width: 560px) { .notice { padding: 24px; } }
+
+/* ===== Quiet effects (DS 10.1), switched on by js/components.js =====
+   Every hiding start state needs a class the script adds (.stagger-on, .draw-on) and sits inside
+   prefers-reduced-motion: no-preference, so without JS or under reduced motion the final state shows. */
+
+/* Parallax [data-parallax] on .media-frame__box, .final__media, .page-hero__media: the frame clips the media. */
+[data-parallax] { overflow: hidden; }
+.final__media[data-parallax] { border-radius: 16px; border: 1px solid var(--gp-glass-border); background: var(--gp-surface-2); }
+.final__media[data-parallax] > .final__img { display: block; border: 0; border-radius: 0; }
+.parallax-on .parallax-media { will-change: transform; }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Staggered entry [data-stagger]: children appear 120ms apart, on every visit (the script re-arms it). */
+  .stagger-on > * { opacity: 0; transform: translateY(24px); filter: blur(4px); }
+  .stagger-on.is-in > * {
+    opacity: 1; transform: none; filter: none;
+    transition: opacity .7s var(--ease), transform .7s var(--ease), filter .7s var(--ease);
+    transition-delay: calc(var(--stagger-i, 0) * 120ms);
+  }
+
+  /* Line drawing [data-draw]: SVG strokes (.draw-path, pathLength 1) and .draw-x bars; --draw-delay staggers parts. */
+  /* stroke-opacity hides the dot a round line cap leaves at the start before a part begins. */
+  .draw-on .draw-path { stroke-dasharray: 1 1; stroke-dashoffset: 1; }
+  .draw-on:not(.is-drawn) .draw-path { stroke-opacity: 0; }
+  .draw-on.is-drawn .draw-path {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1.2s var(--ease) var(--draw-delay, 0s), stroke-opacity 0s linear var(--draw-delay, 0s);
+  }
+  .draw-on .draw-x { transform: scaleX(0); transform-origin: left center; }
+  .draw-on.is-drawn .draw-x { transform: none; transition: transform 1s var(--ease) var(--draw-delay, 0s); }
+
+  /* Shine [data-shine]: one pass of light; the class is removed after it, leaving the solid color. */
+  [data-shine].is-shining {
+    background-image: linear-gradient(110deg, currentColor 40%, var(--gp-white) 50%, currentColor 60%);
+    background-size: 250% 100%; background-position: 100% 0;
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-shadow: none;
+    animation: gia-shine 1.8s var(--ease) forwards;
+  }
+}
+@keyframes gia-shine { to { background-position: 0 0; } }
+
+/* Spotlight [data-spotlight]: a soft gold glow under the pointer, mouse only, no transform.
+   Uses the card's own ::before (free on .card); the script sets --spot-x / --spot-y. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .spot-on { position: relative; isolation: isolate; }
+  .spot-on::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+    background: radial-gradient(360px circle at var(--spot-x, 50%) var(--spot-y, 50%), rgba(242, 179, 90, .14), transparent 70%);
+    opacity: 0; transition: opacity .3s var(--ease);
+  }
+  .spot-on:hover::before { opacity: 1; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .msg-in, .log li.is-new { animation: none; }
