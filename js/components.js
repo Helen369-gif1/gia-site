@@ -55,6 +55,8 @@
                        line; a .flow-return right after a .flow opens after the last arrow, in CSS only).
      .card__art        an SVG in card art draws itself the same way, without an attribute: each time the
                        card comes into view, parts 0.1s apart; in a [data-stagger] grid, after its card appears.
+     svg.draw-icon     a small line icon in a card (not in .card__art); draws itself like card art. Size and look
+                       stay the icon's own.
      [data-shine]      on a .principle: one pass of light per visit (.is-shining), then the solid color. */
 (() => {
   const { reduce } = window.GiaSite || { reduce: window.matchMedia('(prefers-reduced-motion: reduce)').matches };
@@ -316,11 +318,11 @@
     replay(box, () => box.classList.add('is-drawn'), () => box.classList.remove('is-drawn'));
   });
 
-  // Card art draws itself when its card comes into view, parts 0.1s apart.
-  // In a [data-stagger] grid it starts once its own card has appeared.
+  // Card art and draw icons (svg.draw-icon) draw themselves when their card comes into view, parts 0.1s apart.
+  // In a [data-stagger] grid they start once their own card has appeared.
   const STAGGER_STEP = 120, ART_AFTER_CARD = 300;
-  document.querySelectorAll('.card__art').forEach((art) => {
-    if (!art.querySelector('svg') || art.closest('[data-draw]')) return;
+  document.querySelectorAll('.card__art, svg.draw-icon').forEach((art) => {
+    if (!(art.matches('svg') || art.querySelector('svg')) || art.closest('[data-draw]')) return;
     drawPrep(art, 0.1);
     const grid = art.closest('[data-stagger]');
     const kid = grid && [...grid.children].find((k) => k.contains(art));

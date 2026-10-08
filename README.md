@@ -41,7 +41,8 @@ Introducing GLO also links straight to How GLO Works from its options section, a
     js/components.js           shared component behavior: approval sheet, play-once hero video (pages 2-4),
                                pulse diagrams [data-pulse] (wiring, pulses, card status; the hub's routes and scenario),
                                quiet effects switched on by attributes: [data-parallax], [data-stagger], [data-spotlight],
-                               [data-draw], [data-shine] (design system 9.2 and 10.1; demos in docs/components.html)
+                               [data-draw], [data-shine]; card art (.card__art) and small line icons (svg.draw-icon)
+                               draw themselves (design system 9.2 and 10.1; demos in docs/components.html)
     js/site.js                 shared shell: menu, scroll progress, active section, reveal; exposes window.GiaSite
     js/pages/meet-gia.js       Meet Gia: hero scroll video, section 03 video, In action, Memory, permissions, approval, waitlist
     js/pages/meet-gia-frames.js  list of Meet Gia hero video frames
