@@ -176,8 +176,10 @@
       </ul>
       <p class="breather__close">You stay in control.</p>
     </div>
-    <figure class="breather__media">
-      <video class="breather__video" src="assets/video/works-with-you.mp4" poster="assets/images/works-with-you-start.webp" data-end-poster="assets/images/works-with-you-end.webp" width="1280" height="720" muted playsinline preload="auto" aria-hidden="true"></video>
+    <figure class="breather__media media-frame" style="--ratio: 16 / 9">
+      <div class="media-frame__box" data-parallax>
+        <video class="breather__video" src="assets/video/works-with-you.mp4" poster="assets/images/works-with-you-start.webp" data-end-poster="assets/images/works-with-you-end.webp" width="1280" height="720" muted playsinline preload="auto" aria-hidden="true"></video>
+      </div>
     </figure>
   </div>
 </section>
@@ -193,7 +195,9 @@
 
     <div class="personas gap-major">
       <figure class="persona">
-        <img class="persona__img" src="assets/images/busy-professional.webp" width="1200" height="675" loading="lazy" decoding="async" style="object-position: 38% 50%" alt="A man at an outdoor table at sunset checks his phone, with Gia's executive summary open on his laptop">
+        <div class="media-frame__box persona__frame" data-parallax>
+          <img class="persona__img" src="assets/images/busy-professional.webp" width="1200" height="675" loading="lazy" decoding="async" style="object-position: 38% 50%" alt="A man at an outdoor table at sunset checks his phone, with Gia's executive summary open on his laptop">
+        </div>
         <figcaption class="persona__body">
           <h3 class="h4">The busy professional</h3>
           <p class="persona__tag">Too much to manage. Not enough time.</p>
@@ -201,7 +205,9 @@
         </figcaption>
       </figure>
       <figure class="persona">
-        <img class="persona__img" src="assets/images/couple-comparing-homes.webp" width="1200" height="675" loading="lazy" decoding="async" style="object-position: 55% 50%" alt="A couple at home in the evening compares house listings with Gia on a tablet, brochures and a floor plan on the table">
+        <div class="media-frame__box persona__frame" data-parallax>
+          <img class="persona__img" src="assets/images/couple-comparing-homes.webp" width="1200" height="675" loading="lazy" decoding="async" style="object-position: 55% 50%" alt="A couple at home in the evening compares house listings with Gia on a tablet, brochures and a floor plan on the table">
+        </div>
         <figcaption class="persona__body">
           <h3 class="h4">The future builder</h3>
           <p class="persona__tag">Buying a home. Moving. Investing. Planning what comes next.</p>
@@ -209,7 +215,9 @@
         </figcaption>
       </figure>
       <figure class="persona">
-        <img class="persona__img" src="assets/images/quiet-moment.webp" width="1200" height="900" loading="lazy" decoding="async" style="object-position: 50% 45%" alt="A woman relaxing on her sofa talks with Gia on a tablet about ideas from her notebook">
+        <div class="media-frame__box persona__frame" data-parallax>
+          <img class="persona__img" src="assets/images/quiet-moment.webp" width="1200" height="900" loading="lazy" decoding="async" style="object-position: 50% 45%" alt="A woman relaxing on her sofa talks with Gia on a tablet about ideas from her notebook">
+        </div>
         <figcaption class="persona__body">
           <h3 class="h4">The thinker &amp; explorer</h3>
           <p class="persona__tag">Not another search result. A conversation that remembers where you left off.</p>
@@ -453,7 +461,7 @@
       <p class="waitlist__msg" id="wl-msg" aria-live="polite"></p>
       <p class="final__alt"><a href="#in-action">See Gia in action</a></p>
     </div>
-    <figure class="final__media">
+    <figure class="final__media" data-parallax>
       <video class="final__img" data-play-once data-delay="400" data-still="assets/images/final-gia-still.webp" muted playsinline preload="metadata" poster="assets/images/final-gia-poster.webp" width="1280" height="720" aria-hidden="true">
         <source src="assets/video/final-gia.mp4" type="video/mp4">
       </video>

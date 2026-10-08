@@ -63,7 +63,7 @@
 .pillars .h4 { margin-bottom: 4px; }
 .breather__close { margin: 32px 0 0; font-size: clamp(22px, 2.2vw, 30px); font-weight: 600; line-height: 1.25; letter-spacing: -0.01em; color: var(--gp-champagne); }
 .breather__media { margin: 0; }
-.breather__video { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 16px; border: 1px solid var(--gp-glass-border); background: var(--gp-surface-2); }
+/* The video sits in a .media-frame__box (16:9, radius 16, border) that clips it for [data-parallax]. */
 @media (max-width: 900px) { .breather { grid-template-columns: minmax(0, 1fr); gap: 48px; } }
 
 /* ===== 03 How people use Gia ===== */
@@ -79,7 +79,8 @@
 }
 .ph__label { font-family: var(--font-mono); font-size: 11px; line-height: 1.5; color: var(--gp-text-muted); max-width: 32ch; }
 .ph__label b { display: block; font-weight: 600; color: var(--gp-copper); letter-spacing: .08em; margin-bottom: 4px; }
-.persona__img { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 8px; border: 1px solid var(--gp-line); background: var(--gp-surface-2); }
+/* Persona photo frame: a .media-frame__box that clips the photo for [data-parallax]; the img fills it (cover). */
+.persona__frame { --ratio: 3 / 2; border-radius: 8px; border-color: var(--gp-line); }
 .persona__body { padding-top: 24px; }
 .persona__tag { font-size: 17px; font-weight: 500; color: var(--gp-text); margin: 8px 0 12px; line-height: 1.45; }
 @media (max-width: 860px) {
