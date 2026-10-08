@@ -54,7 +54,9 @@ Introducing GLO also links straight to How GLO Works from its options section, a
                                assets/source/gia-original.png) and the section 03 first/last frames
     assets/art/                source SVGs of the card line drawings (.card__art); pages inline the same SVG so
                                currentColor works (glo-uses-*: Introducing GLO #what-it-enables; hgw-option-*: How GLO Works
-                               #your-options; hgw-layer-*: role marks in How GLO Works #three-layer, Gia's mark is her photo)
+                               #your-options; hgw-layer-*: role marks in How GLO Works #three-layer, Gia's mark is her photo;
+                               flow-*: 24px node icons (.flow__icon) in the chains of Introducing GLO 03, Global Connections 06
+                               and How GLO Works 03, Gia's node shows her photo)
     assets/source/             originals: videos, persona photos, logos as supplied
     docs/                      design system, color system, wireframes
     docs/components.html       live reference of every shared component (open via the local server)

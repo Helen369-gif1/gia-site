@@ -229,6 +229,17 @@
 .flow--numbered .flow__node { counter-increment: flow; }
 .flow--numbered .flow__title::before { content: counter(flow); display: block; margin-bottom: 6px; font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--gp-copper); }
 
+/* Node icon (DS 8.1): first child of a node, centered in a 40px slot above the title (32px at 768px and below).
+   A 24px line icon, or for Gia a small .gia-core without the plate. Nodes with an icon align to the top,
+   and .is-key keeps the same top padding, so icons and titles line up across the row. */
+.flow__icon { flex: none; align-self: center; margin-bottom: 6px; color: var(--gp-gold-mid); --draw-dur: .8s; }
+svg.flow__icon { width: 24px; height: 24px; margin-top: 8px; margin-bottom: 14px; overflow: visible; }
+.flow__icon--gia { width: 40px; height: 40px; }
+.flow__icon--gia .gia-core { --core: 40px; }
+.flow__icon--gia .gia-core__photo { box-shadow: 0 0 6px rgba(242, 179, 90, .16); } /* the 180px core's halo would spill onto the arrows */
+.flow__node:has(> .flow__icon) { justify-content: flex-start; }
+.flow__node.is-key:has(> .flow__icon) { padding-top: 18px; }
+
 /* Lists reset their margins; keep the shared heading-to-component distance when .gap-major is set. */
 .flow.gap-major, .steps-line.gap-major { margin-top: clamp(64px, 7vw, 96px); }
 
@@ -247,6 +258,10 @@
 @media (max-width: 768px) {
   .flow { flex-direction: column; --flow-gap: 28px; }
   .flow__node { flex: none; padding: 14px 16px; }
+  svg.flow__icon { margin-top: 4px; margin-bottom: 10px; }
+  .flow__icon--gia { width: 32px; height: 32px; }
+  .flow__icon--gia .gia-core { --core: 32px; }
+  .flow__node.is-key:has(> .flow__icon) { padding-top: 14px; }
   .flow__node:not(:last-child)::after { top: calc(100% + 5px); left: 50%; width: 1px; height: calc(var(--flow-gap) - 14px); }
   .flow__node:not(:last-child)::before { top: calc(100% + var(--flow-gap) - 9px); left: calc(50% - 4px); border-left: 4.5px solid transparent; border-right: 4.5px solid transparent; border-top: 6px solid var(--gp-gold-mid); border-bottom: 0; }
   .flow-return { height: auto; margin: 12px 0 0; border: 0; border-radius: 0; text-align: center; }
@@ -464,7 +479,7 @@
   .draw-on:not(.is-drawn) .draw-path { stroke-opacity: 0; }
   .draw-on.is-drawn .draw-path {
     stroke-dashoffset: 0;
-    transition: stroke-dashoffset 1.2s var(--ease) var(--draw-delay, 0s), stroke-opacity 0s linear var(--draw-delay, 0s);
+    transition: stroke-dashoffset var(--draw-dur, 1.2s) var(--ease) var(--draw-delay, 0s), stroke-opacity 0s linear var(--draw-delay, 0s);
   }
   .draw-on .draw-x { transform: scaleX(0); transform-origin: left center; }
   .draw-on.is-drawn .draw-x { transform: none; transition: transform 1s var(--ease) var(--draw-delay, 0s); }
@@ -477,6 +492,9 @@
   .flow.draw-on.is-drawn > .flow__node::after { transform: none; transition: transform .45s var(--ease) calc(var(--draw-i, 0) * .25s); }
   .flow.draw-on.is-drawn > .flow__node::before { opacity: 1; transition: opacity .15s linear calc(var(--draw-i, 0) * .25s + .4s); }
   .steps-line.draw-on.is-drawn > .steps-line__item::after { transform: none; transition: transform .45s var(--ease) calc(var(--draw-i, 0) * .2s); }
+  /* A node icon starts with the arrow leaving its node (--draw-i × .25s), parts .1s apart (--draw-k from the script),
+     each part in .8s (--draw-dur on .flow__icon), so five parts take 1.2s. */
+  .flow.draw-on > .flow__node .draw-path { --draw-delay: calc(var(--draw-i, 0) * .25s + var(--draw-k, 0) * .1s); }
 
   /* .flow[data-draw] + .flow-return: after the last chain arrow, the return line opens from the last node back to
      the first. Its border is covered by a curtain (::after) in the section color that shrinks to the left, then the

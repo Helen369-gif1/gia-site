@@ -52,7 +52,9 @@
                        .draw-x elements grow from the left (scaleX). On .flow, .steps-line, .path__steps and
                        .gc-timeline the
                        connectors open one after another (--draw-i per item; the arrowhead of a .flow follows its
-                       line; a .flow-return right after a .flow opens after the last arrow, in CSS only).
+                       line; a .flow-return right after a .flow opens after the last arrow, in CSS only). Every part
+                       gets --draw-k, its index inside its own svg: a .flow node icon (.flow__icon) starts with the
+                       arrow leaving its node, parts .1s apart (CSS).
      .card__art        an SVG in card art draws itself the same way, without an attribute: each time the
                        card comes into view, parts 0.1s apart; in a [data-stagger] grid, after its card appears.
      svg.draw-icon     a small line icon in a card (not in .card__art); draws itself like card art. Size and look
@@ -302,10 +304,15 @@
 
   // Line drawing
   const DRAW_SHAPES = 'svg path, svg line, svg polyline, svg polygon, svg circle, svg ellipse, svg rect';
+  // --draw-k numbers the parts inside their own svg, so CSS can stagger the parts of each icon (.flow node icons).
   const drawPrep = (box, step) => {
+    const parts = new Map();
     [...box.querySelectorAll(DRAW_SHAPES)].filter((p) => !p.closest('.no-draw')).forEach((p, i) => {
+      const k = parts.get(p.ownerSVGElement) || 0;
+      parts.set(p.ownerSVGElement, k + 1);
       p.setAttribute('pathLength', '1');
       p.classList.add('draw-path');
+      p.style.setProperty('--draw-k', k);
       if (step) p.style.setProperty('--draw-delay', (i * step).toFixed(2) + 's');
     });
     box.classList.add('draw-on');
