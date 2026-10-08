@@ -35,20 +35,22 @@
    Quiet effects (design system 10.1). One shared IntersectionObserver helper (watch). Stagger, draw
    (with card art) and shine replay on every visit, like the play-once video (replay): they play when the
    block comes into view, and only after it has left the screen completely do they quietly return to the
-   start state, ready for the next visit; while any part is visible they never restart. Parallax follows
-   the scroll while the frame is on screen. Hiding start states exist only once the script has added its
+   start state, ready for the next visit; while any part is visible they never restart. Parallax answers
+   the mouse only. Hiding start states exist only once the script has added its
    class, and CSS drops them under reduced motion, so without JS or with reduced motion everything
    shows its final state. A change of the reduced-motion setting applies without a reload.
-     [data-parallax]   on .media-frame__box, .final__media or .page-hero__media: the img / video inside
-                       is scaled to 1.18 and moves up to ±8% of the frame height (±4% at 768px and below)
-                       while the frame is on screen. Optional value: a smaller maximum, e.g. "0.05".
-                       One requestAnimationFrame update per scroll or resize for the whole page.
+     [data-parallax]   on .media-frame__box or .final__media (never a page hero or .gia-core): hover with a mouse
+                       ((hover: hover) and (pointer: fine)) adds .is-hover: the frame grows to 1.02 with a brighter
+                       border, the img / video inside grows to 1.08 and follows the pointer in the opposite
+                       direction, at most 12px per axis, smoothed in requestAnimationFrame (in 400ms, back 600ms).
+                       At rest the media is its normal size. Nothing on touch devices or under reduced motion.
      [data-stagger]    on a grid: its children appear 120ms apart (.stagger-on, then .is-in).
                        Not on the same element as .reveal.
      [data-spotlight]  on a card: a soft gold glow follows a mouse pointer (.spot-on, --spot-x/--spot-y).
      [data-draw]       on a container: adds .is-drawn on each visit. SVG shapes inside (path, line, polyline, polygon,
                        circle, ellipse, rect) draw through stroke-dashoffset (skip one with .no-draw);
-                       .draw-x elements grow from the left (scaleX).
+                       .draw-x elements grow from the left (scaleX). On .flow and .steps-line the connectors
+                       open one after another (--draw-i per item; the arrowhead of a .flow follows its line).
      .card__art        an SVG in card art draws itself the same way, without an attribute: each time the
                        card comes into view, parts 0.1s apart; in a [data-stagger] grid, after its card appears.
      [data-shine]      on a .principle: one pass of light per visit (.is-shining), then the solid color. */
@@ -209,38 +211,52 @@
     watch(el, (en) => { if (!en.isIntersecting && played) { played = false; reset(); } }, { margin: '0px', once: false });
   };
 
-  // Parallax
-  const PARALLAX_SCALE = 1.18, PARALLAX_MAX = 0.08;   // the scale leaves 9% on each side, so the 8% shift never shows an edge
-  const smallMQ = window.matchMedia('(max-width: 768px)');
-  const frames = [...document.querySelectorAll('[data-parallax]')]
-    .filter((el) => el.matches('.media-frame__box, .final__media, .page-hero__media') && !el.closest('.gia-core, .card__art'))
-    .map((el) => ({ el, media: el.querySelector('img, video'), max: Math.min(PARALLAX_MAX, parseFloat(el.dataset.parallax) || PARALLAX_MAX), y: null }))
-    .filter((f) => f.media);
-  const shown = new Set();
-  let pRaf = 0;
-  const parallaxTick = () => {
-    pRaf = 0;
-    if (motionMQ.matches) return;
-    const vh = window.innerHeight, k = smallMQ.matches ? 0.5 : 1;
-    const rects = [...shown].map((f) => [f, f.el.getBoundingClientRect()]);   // read everything, then write
-    rects.forEach(([f, r]) => {
-      const p = Math.max(-1, Math.min(1, (r.top + r.height / 2 - vh / 2) / ((vh + r.height) / 2)));
-      const y = Math.round(-p * f.max * k * r.height * 10) / 10;
-      if (y !== f.y) { f.y = y; f.media.style.transform = `translate3d(0, ${y}px, 0) scale(${PARALLAX_SCALE})`; }
+  // Parallax on hover: CSS scales the frame (1.02) and the media (1.08) on .is-hover; the script moves the
+  // media against the pointer through the `translate` property, smoothed in requestAnimationFrame.
+  const PARALLAX_SHIFT = 12, PARALLAX_MEDIA_SCALE = 1.08;
+  const PARALLAX_FOLLOW = 120, PARALLAX_RETURN = 150;   // ms time constants: follow the pointer, settle back (~600ms)
+  const fineMQ = window.matchMedia('(hover: hover) and (pointer: fine)');
+  const parallaxOk = () => fineMQ.matches && !motionMQ.matches;
+  document.querySelectorAll('[data-parallax]').forEach((el) => {
+    if (!el.matches('.media-frame__box, .final__media') || el.closest('.page-hero, .gia-core, .card__art')) return;
+    const media = el.querySelector('img, video');
+    if (!media) return;
+    el.classList.add('parallax-on');
+    media.classList.add('parallax-media');
+    let raf = 0, last = 0, x = 0, y = 0, tx = 0, ty = 0, over = false;
+    const step = (now) => {
+      const dt = Math.min(64, now - (last || now)); last = now;
+      const k = 1 - Math.exp(-dt / (over ? PARALLAX_FOLLOW : PARALLAX_RETURN));
+      x += (tx - x) * k; y += (ty - y) * k;
+      const done = !over && Math.abs(x) < 0.05 && Math.abs(y) < 0.05;
+      if (done) { x = y = 0; media.style.translate = ''; raf = 0; last = 0; return; }
+      media.style.translate = `${x.toFixed(2)}px ${y.toFixed(2)}px`;
+      raf = requestAnimationFrame(step);
+    };
+    const run = () => { if (!raf) raf = requestAnimationFrame(step); };
+    const aim = (e) => {
+      const r = el.getBoundingClientRect();
+      // The 1.08 scale leaves 4% of the frame on each side; never shift further, so no edge shows.
+      const mx = Math.min(PARALLAX_SHIFT, r.width * (PARALLAX_MEDIA_SCALE - 1) / 2 - 1);
+      const my = Math.min(PARALLAX_SHIFT, r.height * (PARALLAX_MEDIA_SCALE - 1) / 2 - 1);
+      const nx = Math.max(-1, Math.min(1, (e.clientX - r.left) / r.width * 2 - 1));
+      const ny = Math.max(-1, Math.min(1, (e.clientY - r.top) / r.height * 2 - 1));
+      tx = -nx * mx; ty = -ny * my;   // against the pointer
+    };
+    const leave = () => { over = false; tx = ty = 0; el.classList.remove('is-hover'); run(); };
+    el.addEventListener('pointerenter', (e) => {
+      if (e.pointerType !== 'mouse' || !parallaxOk()) return;
+      over = true; el.classList.add('is-hover'); aim(e); run();
     });
-  };
-  const parallaxQueue = () => { if (!pRaf && shown.size && !motionMQ.matches) pRaf = requestAnimationFrame(parallaxTick); };
-  const parallaxReset = () => frames.forEach((f) => { f.y = null; f.media.style.transform = ''; });
-  frames.forEach((f) => {
-    f.el.classList.add('parallax-on');
-    f.media.classList.add('parallax-media');
-    watch(f.el, (en) => { if (en.isIntersecting) shown.add(f); else shown.delete(f); parallaxQueue(); }, { margin: '0px', once: false });
+    el.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      if (!parallaxOk()) { if (over) leave(); return; }
+      if (!over) { over = true; el.classList.add('is-hover'); }
+      aim(e); run();
+    });
+    el.addEventListener('pointerleave', leave);
+    onChange(motionMQ, () => { if (motionMQ.matches) { leave(); cancelAnimationFrame(raf); raf = 0; last = 0; x = y = 0; media.style.translate = ''; } });
   });
-  if (frames.length) {
-    window.addEventListener('scroll', parallaxQueue, { passive: true });
-    window.addEventListener('resize', parallaxQueue, { passive: true });
-    onChange(motionMQ, () => { if (motionMQ.matches) parallaxReset(); else parallaxQueue(); });
-  }
 
   // Staggered entry
   document.querySelectorAll('[data-stagger]').forEach((grid) => {
@@ -292,6 +308,8 @@
   };
   document.querySelectorAll('[data-draw]').forEach((box) => {
     drawPrep(box);
+    // .flow and .steps-line draw their connectors (pseudo-elements) one after another, by item order.
+    if (box.matches('.flow, .steps-line')) [...box.children].forEach((li, i) => li.style.setProperty('--draw-i', i));
     // Removing .is-drawn is instant: the transitions live only on .is-drawn.
     replay(box, () => box.classList.add('is-drawn'), () => box.classList.remove('is-drawn'));
   });

@@ -64,6 +64,8 @@
     }
     return FOCUS[FOCUS.length - 1][1];
   }
+  // Vertical anchor: Gia's head sits at the top of every frame, so any excess height is cropped mostly from the bottom
+  const FOCUS_Y = 0.1;
   function drawImg(img, p, alpha) {
     if (!img || !img.complete || !img.naturalWidth) return false;
     const cw = canvas.width, ch = canvas.height, iw = img.naturalWidth, ih = img.naturalHeight;
@@ -71,7 +73,7 @@
     const dw = iw * s, dh = ih * s;
     const fx = focusAt(clamp(p / VIDEO_END, 0, 1)); // horizontal focus follows Gia on narrow screens
     ctx.globalAlpha = alpha;
-    ctx.drawImage(img, -(dw - cw) * fx, -(dh - ch) * 0.5, dw, dh);
+    ctx.drawImage(img, -(dw - cw) * fx, -(dh - ch) * FOCUS_Y, dw, dh);
     ctx.globalAlpha = 1;
     return true;
   }

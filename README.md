@@ -52,7 +52,8 @@ Introducing GLO also links straight to How GLO Works from its options section, a
     assets/images/             optimized photos (gia.webp + gia.png fallback, 400x400 face crop of
                                assets/source/gia-original.png) and the section 03 first/last frames
     assets/art/                source SVGs of the card line drawings (.card__art); pages inline the same SVG so
-                               currentColor works (glo-uses-*: Introducing GLO #what-it-enables)
+                               currentColor works (glo-uses-*: Introducing GLO #what-it-enables; hgw-option-*: How GLO Works
+                               #your-options; hgw-layer-*: role marks in How GLO Works #three-layer, Gia's mark is her photo)
     assets/source/             originals: videos, persona photos, logos as supplied
     docs/                      design system, color system, wireframes
     docs/components.html       live reference of every shared component (open via the local server)
@@ -88,7 +89,8 @@ srcset and width/height to use in the page. Photos already processed are skipped
 ## Notes
 
 - Colors: docs/GLONARI_PULSE_COLORS.md has priority. Everything else visual and structural (type, spacing, grid, components, logo, site shell, motion): docs/GIA-SITE-DESIGN-SYSTEM.md.
-- Hero video: plays over the first 85% of the hero scroll; the last 15% holds the final frame with the CTA.
+- Hero video: the canvas starts below the header and frames are anchored near the top (FOCUS_Y in
+  js/pages/meet-gia.js), so Gia's head stays visible; plays over the first 85% of the hero scroll; the last 15% holds the final frame with the CTA.
   To replace it, re-export frames:
   `ffmpeg -i new.mp4 -an -vf "select='not(mod(n\,2))',scale=1280:-1" -vsync vfr -c:v libwebp -quality 70 assets/hero-frames/f%03d.webp`
   and update the count in js/pages/meet-gia-frames.js.
@@ -116,7 +118,8 @@ srcset and width/height to use in the page. Photos already processed are skipped
   growth chart, which the content rules forbid); the unblurred original is assets/source/final-glo-unblurred.png.
 - Hero of pages 2-4: full-screen media with the text on the side.
   Introducing GLO: assets/video/hero-glo.mp4 (8 s, no audio; original in assets/source/hero-glo-original.mp4),
-  text on the right. Hero videos play once each time the hero comes into view (after 0.8 s), no loop;
+  text on the right; the video starts below the header (`.page-hero--below-header`, `--focus: 30% 10%`) so Gia's head
+  is never hidden on short laptop screens, and page heroes have no parallax. Hero videos play once each time the hero comes into view (after 0.8 s), no loop;
   poster = first frame (hero-glo-poster.webp), reduced motion shows the last frame (hero-glo-still.webp).
   Global Connections: final image hero-gc-800/-1600 (master with the blur: assets/source/hero-gc.png; unblurred original:
   assets/source/hero-gc-original.jpg), text on the left.

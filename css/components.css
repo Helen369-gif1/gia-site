@@ -110,6 +110,9 @@
 .page-hero__media { position: absolute; inset: 0; z-index: -2; margin: 0; }
 .page-hero__media > picture { display: contents; }
 .page-hero__media > img, .page-hero__media > picture > img, .page-hero__media > video { width: 100%; height: 100%; object-fit: cover; object-position: var(--focus, 50% 50%); display: block; }
+/* --below-header: the media starts below the solid fixed header, so a subject at the top of the frame (a head) is
+   never hidden under it; pair it with a --focus near the top (e.g. 30% 10%) so any excess is cropped from the bottom. */
+.page-hero--below-header .page-hero__media { top: var(--header-h); }
 .page-hero__media--placeholder { background: radial-gradient(ellipse at 68% 40%, rgba(241, 167, 77, .16), transparent 60%), var(--gp-black); }
 /* Darkening: strongest behind the text, fading toward the subject; a soft fade into the next section. */
 .page-hero::before {
@@ -204,7 +207,7 @@
    96px area (72px at 560px and below), drawing aligned left, line art in currentColor.
    A slot without an svg or img takes no space. */
 .card__art { display: flex; align-items: center; justify-content: flex-start; height: 96px; margin-bottom: 20px; color: var(--gp-gold); }
-.card--flex > .card__art { margin-bottom: 8px; } /* plus the card's 12px gap */
+.card--flex > .card__art, .option > .card__art { margin-bottom: 8px; } /* plus the card's 12px gap */
 .card__art > svg { display: block; height: 100%; width: auto; max-width: 100%; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
 .card__art > img { display: block; width: auto; height: auto; max-height: 100%; max-width: 100%; }
 .card__art:not(:has(svg, img)) { display: none; }
@@ -428,11 +431,23 @@
    Every hiding start state needs a class the script adds (.stagger-on, .draw-on) and sits inside
    prefers-reduced-motion: no-preference, so without JS or under reduced motion the final state shows. */
 
-/* Parallax [data-parallax] on .media-frame__box, .final__media, .page-hero__media: the frame clips the media. */
+/* Parallax on hover [data-parallax] on .media-frame__box, .final__media: the frame clips the media.
+   At rest the photo is its normal size (object-fit: cover). With a mouse, on hover the frame grows to 1.02 with a
+   brighter gold border and a soft shadow; the photo grows to 1.08 and the script moves it against the pointer
+   (translate, at most 12px). In 400ms, back in 600ms. Never on touch devices or under reduced motion. */
 [data-parallax] { overflow: hidden; }
 .final__media[data-parallax] { border-radius: 16px; border: 1px solid var(--gp-glass-border); background: var(--gp-surface-2); }
 .final__media[data-parallax] > .final__img { display: block; border: 0; border-radius: 0; }
-.parallax-on .parallax-media { will-change: transform; }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .parallax-on { transition: scale .6s var(--ease), border-color .6s var(--ease), box-shadow .6s var(--ease); }
+  .parallax-on .parallax-media { transition: scale .6s var(--ease); }
+  .parallax-on.is-hover {
+    scale: 1.02; border-color: var(--gp-glass-border-active);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, .45), 0 0 24px rgba(250, 185, 90, .12);
+    transition-duration: .4s;
+  }
+  .parallax-on.is-hover .parallax-media { scale: 1.08; transition-duration: .4s; will-change: scale, translate; }
+}
 
 @media (prefers-reduced-motion: no-preference) {
   /* Staggered entry [data-stagger]: children appear 120ms apart, on every visit (the script re-arms it). */
@@ -453,6 +468,19 @@
   }
   .draw-on .draw-x { transform: scaleX(0); transform-origin: left center; }
   .draw-on.is-drawn .draw-x { transform: none; transition: transform 1s var(--ease) var(--draw-delay, 0s); }
+
+  /* .flow[data-draw], .steps-line[data-draw]: the connector lines (::after) open one after another,
+     by item order (--draw-i from the script); a .flow arrowhead (::before) appears after its line. */
+  .flow.draw-on > .flow__node::after,
+  .steps-line.draw-on > .steps-line__item::after { transform: scaleX(0); transform-origin: left center; }
+  .flow.draw-on > .flow__node::before { opacity: 0; }
+  .flow.draw-on.is-drawn > .flow__node::after { transform: none; transition: transform .45s var(--ease) calc(var(--draw-i, 0) * .25s); }
+  .flow.draw-on.is-drawn > .flow__node::before { opacity: 1; transition: opacity .15s linear calc(var(--draw-i, 0) * .25s + .4s); }
+  .steps-line.draw-on.is-drawn > .steps-line__item::after { transform: none; transition: transform .45s var(--ease) calc(var(--draw-i, 0) * .2s); }
+  @media (max-width: 768px) {
+    .flow.draw-on > .flow__node::after,
+    .steps-line.draw-on > .steps-line__item::after { transform: scaleY(0); transform-origin: center top; }
+  }
 
   /* Shine [data-shine]: one pass of light; the class is removed after it, leaving the solid color. */
   [data-shine].is-shining {

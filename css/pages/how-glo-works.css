@@ -62,6 +62,9 @@
 .layer { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px 32px; align-items: center; padding: 24px 28px; background: var(--gp-surface); border: 1px solid var(--gp-line); border-radius: 8px; }
 .layer--key { padding-block: 36px; border-color: var(--gp-glass-border-active); background: rgba(242, 179, 90, .05); }
 .layer__role { display: grid; gap: 4px; }
+/* Role mark above the tag: 56px at every width (the shared .card__art 72px step at 560px does not apply). */
+.layer__role > .layer__mark { height: 56px; margin-bottom: 8px; }
+.layer__mark .gia-core { --core: 56px; }
 .layer__tag { font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gp-copper); }
 .layer__name { font-size: 20px; font-weight: 600; line-height: 1.25; color: var(--gp-text); }
 .layer--key .layer__name { font-size: 24px; color: var(--gp-gold); }
