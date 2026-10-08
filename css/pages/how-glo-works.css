@@ -96,6 +96,12 @@
 .path__steps li:not(:last-child)::after { content: ""; position: absolute; left: 12px; top: 28px; bottom: 4px; width: 1px; background: currentColor; opacity: .25; }
 .path--work .path__steps li::before { border-color: rgba(46, 219, 140, .5); color: var(--gp-green); }
 .path--market .path__steps li::before { border-color: rgba(195, 115, 78, .6); color: var(--gp-warning); }
+/* .path__steps[data-draw]: the lines between step numbers open from the top, one after another
+   (--draw-i from js/components.js), like .steps-line[data-draw]; the numbers do not move. */
+@media (prefers-reduced-motion: no-preference) {
+  .path__steps.draw-on > li::after { transform: scaleY(0); transform-origin: center top; }
+  .path__steps.draw-on.is-drawn > li::after { transform: none; transition: transform .45s var(--ease) calc(var(--draw-i, 0) * .2s); }
+}
 .path__end { margin-top: auto; }
 .hgw-limit { margin-top: 32px; }
 .hgw-limit .small { margin: 0; }

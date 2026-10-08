@@ -477,9 +477,23 @@
   .flow.draw-on.is-drawn > .flow__node::after { transform: none; transition: transform .45s var(--ease) calc(var(--draw-i, 0) * .25s); }
   .flow.draw-on.is-drawn > .flow__node::before { opacity: 1; transition: opacity .15s linear calc(var(--draw-i, 0) * .25s + .4s); }
   .steps-line.draw-on.is-drawn > .steps-line__item::after { transform: none; transition: transform .45s var(--ease) calc(var(--draw-i, 0) * .2s); }
+
+  /* .flow[data-draw] + .flow-return: after the last chain arrow, the return line opens from the last node back to
+     the first. Its border is covered by a curtain (::after) in the section color that shrinks to the left, then the
+     arrowhead (::before) appears. Only on a solid section background (as the label's own background). */
+  .flow.draw-on + .flow-return::after {
+    content: ""; position: absolute; inset: 0 -1px -1px; background: var(--section-bg, var(--gp-bg));
+    transform-origin: left center; pointer-events: none;
+  }
+  .flow.draw-on + .flow-return::before { opacity: 0; }
+  .flow.draw-on + .flow-return > .flow-return__label { z-index: 1; }
+  .flow.draw-on.is-drawn + .flow-return::after { transform: scaleX(0); transition: transform .9s var(--ease) calc((var(--n, 5) - 2) * .25s + .55s); }
+  .flow.draw-on.is-drawn + .flow-return::before { opacity: 1; transition: opacity .15s linear calc((var(--n, 5) - 2) * .25s + 1.4s); }
+
   @media (max-width: 768px) {
     .flow.draw-on > .flow__node::after,
     .steps-line.draw-on > .steps-line__item::after { transform: scaleY(0); transform-origin: center top; }
+    .flow.draw-on + .flow-return::after { content: none; }
   }
 
   /* Shine [data-shine]: one pass of light; the class is removed after it, leaving the solid color. */
