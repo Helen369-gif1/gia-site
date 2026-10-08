@@ -108,7 +108,8 @@
   background: var(--gp-black);
 }
 .page-hero__media { position: absolute; inset: 0; z-index: -2; margin: 0; }
-.page-hero__media > img, .page-hero__media > video { width: 100%; height: 100%; object-fit: cover; object-position: var(--focus, 50% 50%); display: block; }
+.page-hero__media > picture { display: contents; }
+.page-hero__media > img, .page-hero__media > picture > img, .page-hero__media > video { width: 100%; height: 100%; object-fit: cover; object-position: var(--focus, 50% 50%); display: block; }
 .page-hero__media--placeholder { background: radial-gradient(ellipse at 68% 40%, rgba(241, 167, 77, .16), transparent 60%), var(--gp-black); }
 /* Darkening: strongest behind the text, fading toward the subject; a soft fade into the next section. */
 .page-hero::before {

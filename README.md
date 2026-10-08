@@ -102,25 +102,29 @@ srcset and width/height to use in the page. Photos already processed are skipped
   footer links Learn about membership, Privacy and Terms (set MEMBERSHIP_PAGE, PRIVACY_PAGE, TERMS_PAGE in
   tools/build-shell.py and run it; a footer column with no links is left out).
 - The important-information wording in the footer is a draft for product and legal review.
-- Placeholders, Meet Gia: final CTA image (temporary frame from the hero video). The FAQ question "Where is my data stored,
+- Meet Gia final CTA: video assets/video/final-gia.mp4 (plays once; poster final-gia-poster.webp, still final-gia-still.webp).
+- Placeholders, Meet Gia: the FAQ question "Where is my data stored,
   and how do I delete it?" is hidden (`hidden` on its `details` in index.html) and waits for the answer from the product
   and legal teams: write the answer and remove `hidden`.
 - Final photos (originals in assets/source/, optimized WebP + JPEG fallback in two sizes in assets/images/):
   Global Connections: gc-hero-workspace-800/-1600; How GLO Works: hgw-choice-panel-800 (600x800) / -1448 (full size).
+  Introducing GLO final CTA: final-glo-800/-1600. The bar-chart tile on the panel is blurred (it could read as a
+  growth chart, which the content rules forbid); the unblurred original is assets/source/final-glo-unblurred.png.
 - Hero of pages 2-4: full-screen media with the text on the side.
   Introducing GLO: assets/video/hero-glo.mp4 (8 s, no audio; original in assets/source/hero-glo-original.mp4),
   text on the right. Hero videos play once each time the hero comes into view (after 0.8 s), no loop;
   poster = first frame (hero-glo-poster.webp), reduced motion shows the last frame (hero-glo-still.webp).
-  Global Connections: temporary image assets/images/hero-gc-temp.webp (original: assets/source/hero-gc-original.jpg), text on the left.
+  Global Connections: final image hero-gc-800/-1600 (master with the blur: assets/source/hero-gc.png; unblurred original:
+  assets/source/hero-gc-original.jpg), text on the left.
   The "$48 per GLO" figure on the monitor in the photo is blurred: the content rules forbid a rate per GLO.
-  The final image must not show compensation figures.
+  Any replacement image must not show compensation figures either.
   How GLO Works: animated systems diagram (inline SVG) on the right, text on the left; it builds once per visit.
 - Placeholders, How GLO Works: "Learn about membership" destination, option status labels (drafts).
-- Placeholders, Global Connections: the hero image is temporary (no tag on the page any more), the illustrative project total
+- Placeholders, Global Connections: the illustrative project total
   (the terms card says "Defined in the project terms" until a value is set with the legal team), "Learn about membership"
   destination, status label (Coming next, draft).
   The example project (logistics market briefing) is invented for illustration and used consistently in sections 02-08.
-- Placeholders, Introducing GLO: final CTA photo,
+- Placeholders, Introducing GLO:
   "Learn about membership" destination, capability status labels (drafts, conservative), example values in the workspace.
 - Pulse diagrams (Introducing GLO 02 hub, How GLO Works 06 ecosystem): Gia's photo in the center, wiring drawn in one SVG
   from the measured cards, pulses and card status driven by js/components.js. The cycle plays 3 times when the diagram
