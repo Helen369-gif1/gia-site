@@ -49,7 +49,7 @@
 .cmp thead th { color: var(--gp-text-muted); font-size: 11px; font-family: var(--font-mono); letter-spacing: .04em; }
 .cmp tbody th { color: var(--gp-text-2); }
 .cmp td { color: var(--gp-text); }
-.cmp .best { color: var(--gp-green); }
+.cmp .best { color: var(--gp-gold-mid); }
 .mock .btn-row { gap: 8px; margin-top: auto; }
 @media (max-width: 960px) { .steps { grid-template-columns: minmax(0, 1fr); gap: 56px; } .mock { min-height: 0; } }
 
@@ -121,12 +121,12 @@
 .opt__big { font-size: 22px; font-weight: 600; letter-spacing: -0.01em; color: var(--gp-text); }
 .opt__meta { color: var(--gp-text-muted); }
 .opt__price--up { color: var(--gp-warning); }
-.opt__price--same { color: var(--gp-green); }
+.opt__price--same { color: var(--gp-gold-mid); }
 .card-inline { border: 1px solid var(--gp-glass-border-active); border-radius: 12px; padding: 16px; display: grid; gap: 10px; font-size: 14px; background: rgba(20, 17, 14, .6); }
 .card-inline dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; font-size: 13px; }
 .card-inline dt { color: var(--gp-text-muted); }
 .card-inline dd { margin: 0; }
-.done-mark { display: inline-flex; align-items: center; gap: 10px; color: var(--gp-green); font-weight: 600; font-size: 16px; }
+.done-mark { display: inline-flex; align-items: center; gap: 10px; color: var(--gp-gold-mid); font-weight: 600; font-size: 16px; }
 .done-mark svg { flex: none; }
 .unsure { border-color: rgba(195, 115, 78, .55); }
 @media (max-width: 900px) {
@@ -154,7 +154,7 @@
 .forget:hover { color: var(--gp-text); border-color: var(--gp-line); }
 .forget:focus-visible { outline: 2px solid var(--gp-gold); }
 .mem__note { font-size: 12px; color: var(--gp-text-muted); margin-top: auto; }
-.mem__toast { font-size: 12px; color: var(--gp-green); min-height: 18px; }
+.mem__toast { font-size: 12px; color: var(--gp-gold-mid); min-height: 18px; }
 @media (max-width: 960px) { .split--mem { grid-template-columns: minmax(0, 1fr); gap: 56px; } }
 @media (max-width: 560px) { .mem { grid-template-columns: minmax(0, 1fr); } .mem__side { border-left: 0; border-top: 1px solid var(--gp-glass-border); } .mem__chat { min-height: 0; } }
 
@@ -214,7 +214,7 @@
 .waitlist input::placeholder { color: var(--gp-text-muted); }
 .waitlist input:focus-visible { outline: 2px solid var(--gp-gold); outline-offset: 1px; border-color: transparent; }
 .waitlist__msg { margin-top: 16px; font-size: 15px; min-height: 24px; color: var(--gp-text-2); }
-.waitlist__msg.is-ok { color: var(--gp-green); }
+.waitlist__msg.is-ok { color: var(--gp-gold-mid); }
 .final__alt { margin-top: 20px; font-size: 15px; }
 .final__alt a { color: var(--gp-gold); text-underline-offset: 4px; }
 @media (max-width: 960px) { .waitlist .btn { width: 100%; } }

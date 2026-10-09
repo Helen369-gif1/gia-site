@@ -21,7 +21,7 @@
 .dg-title { font-family: var(--font-ui); font-size: 18px; font-weight: 600; fill: var(--gp-text); }
 .dg-title--gia { font-family: var(--font-display); font-size: 26px; fill: var(--gp-champagne); }
 .dg-sub { font-family: var(--font-ui); font-size: 13.5px; fill: var(--gp-text-2); }
-.dg-sub--keep { fill: var(--gp-green); }
+.dg-sub--keep { fill: var(--gp-gold-mid); }
 .dg-sub--change { fill: var(--gp-warning); }
 .dg-line { fill: none; stroke: var(--gp-text-muted); stroke-width: 1.5; }
 .dg-line--gold { stroke: var(--gp-gold-mid); }
@@ -86,7 +86,7 @@
 .paths { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px; }
 .paths > * { min-width: 0; }
 .path { display: flex; flex-direction: column; gap: 12px; padding: 28px; border-radius: 8px; background: var(--gp-surface); border: 1px solid; }
-.path--work { border-color: rgba(46, 219, 140, .35); }
+.path--work { border-color: var(--gp-glass-border); }
 .path--market { border-color: rgba(195, 115, 78, .5); }
 .path__title { margin: 0; font-size: 20px; font-weight: 600; color: var(--gp-text); }
 .path__sub { margin: 0; font-size: 16px; color: var(--gp-text-2); }
@@ -94,7 +94,7 @@
 .path__steps li { counter-increment: ps; position: relative; padding: 0 0 18px 36px; font-size: 15px; line-height: 1.5; color: var(--gp-text); }
 .path__steps li::before { content: counter(ps); position: absolute; left: 0; top: 0; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 11px; font-weight: 600; border: 1px solid; }
 .path__steps li:not(:last-child)::after { content: ""; position: absolute; left: 12px; top: 28px; bottom: 4px; width: 1px; background: currentColor; opacity: .25; }
-.path--work .path__steps li::before { border-color: rgba(46, 219, 140, .5); color: var(--gp-green); }
+.path--work .path__steps li::before { border-color: var(--gp-glass-border-active); color: var(--gp-gold-mid); }
 .path--market .path__steps li::before { border-color: rgba(195, 115, 78, .6); color: var(--gp-warning); }
 /* .path__steps[data-draw]: the lines between step numbers open from the top, one after another
    (--draw-i from js/components.js), like .steps-line[data-draw]; the numbers do not move. */

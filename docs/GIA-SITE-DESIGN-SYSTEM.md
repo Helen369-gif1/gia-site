@@ -56,10 +56,12 @@ Color tokens use the `--gp-` prefix and are defined by `docs/GLONARI_PULSE_COLOR
 | Gold (actions, active states, icons) | `--gp-gold-glow`, `--gp-gold`, `--gp-gold-warm`, `--gp-gold-mid`, `--gp-gold-deep`, `--gp-gold-dark` |
 | Editorial gold | `--gp-champagne` (display headlines), `--gp-copper` (eyebrows, labels) |
 | Text | `--gp-text`, `--gp-text-2`, `--gp-text-muted`, `--gp-on-gold`, `--gp-white` (rare) |
-| Data and status only | `--gp-green`, `--gp-blue`, `--gp-teal`, `--gp-violet`, `--gp-warning` |
+| Data and status only | `--gp-blue`, `--gp-teal`, `--gp-violet`, `--gp-warning`; `--gp-green` stays defined in tokens.css but is not used on the site |
 | Effects | `--gp-btn-gradient`, `--gp-power-glow`, `--gp-glass` |
 
 Data colors never appear on buttons, links or navigation.
+
+Status rule: gold (`--gp-gold-mid`) means "all good / stays with you / done"; copper (`--gp-warning`) means "pay attention / review / ownership changes".
 
 ### 3.2 Type, layout and motion
 
@@ -270,7 +272,7 @@ Status labels are small mono text with a colored dot (`.status`). Mapping from t
 |---|---|
 | Main action (orange in drawings) | gold primary button |
 | Gia, active step, selected option (blue in drawings) | gold active border (`--gp-glass-border-active`) and gold text |
-| Ready, done, GLO retained (green in drawings) | `--gp-green` status |
+| Ready, done, available now, success messages, check marks, GLO retained (green in drawings) | `--gp-gold-mid` status; gold borders and fills use the existing gold values (`--gp-glass-border`, `--gp-glass-border-active`, `rgba(242, 179, 90, .05)`) |
 | Working, researching, analyzing | `--gp-blue` status |
 | Needs review, not reviewed, ownership changes | `--gp-warning` status |
 | Conditional or not yet available | dashed `--gp-line` border plus a "Coming next" status |
@@ -297,7 +299,7 @@ Diagrams (resource hub, flows, cycles, the ecosystem map) are inline SVG or HTML
 - Nodes: `--gp-surface` fill, `--gp-line` border, radius 8px. The Gia node uses the active gold border and is the largest node. GLO is never larger than Gia and never gets a "brain" or agent treatment.
 - Connectors: 1px `--gp-line`; an active path brightens to `--gp-gold-mid`.
 - Labels are real text in IBM Plex Sans; every node corresponds to a named concept from the wireframe.
-- Ownership indicators ("GLO stays with you", "Ownership changed") are pinned bars under the flow, styled as status, so they stay visible through the whole sequence.
+- Ownership indicators ("GLO stays with you", "Ownership changed") are pinned bars under the flow (neutral bar with a gold dot; copper with a hollow ring when ownership changes), so they stay visible through the whole sequence.
 - A static or reduced-motion diagram shows the complete picture.
 - Where Gia is the center of a diagram (hub, ecosystem), she is shown as `.gia-core`: her photo (`assets/images/gia.webp`, PNG fallback, `alt="Gia"`) in a circle with a 1px `--gp-gold` ring and a soft gold glow, 180px wide and 140px in the vertical layout. Her name and role sit in a dark plate over the lower edge of the circle, never over her face.
 
@@ -345,12 +347,12 @@ Live examples with real wireframe copy: `docs/components.html` (open it through 
 | Badge | `.badge--now`, `--approval`, `--next`, `--vision`, `--plain` | everywhere a capability or option has a status | Available now / With approval / Coming next / Vision; `--plain` for "Illustrative" |
 | Card grid | `.cards--2/3/4`, `.card--flex`, `.card__head`, `.card__example`, `.card__link`, `.card--key` | GLO 04 | badge sits above the title; titles stay aligned when only some cards have a badge |
 | Flow | `ol.flow > li.flow__node`, `__icon`, `__icon--gia`, `__title`, `__sub`, `.is-key`, `.is-end`, `.flow--numbered` | GLO 03, GC 06, How GLO Works 03/05 | gold arrows; vertical at 768px; `.is-key` (Gia) is wider and gold; node icons (`.flow__icon`, section 8.1) in GLO 03, GC 06 and How GLO Works 03; `.flow[data-draw]` (GLO 03, GC 06, How GLO Works 03): on each visit the arrows draw one after another from the first node, the line (`::after`) opens by `scaleX` (`scaleY` from the top at 768px), 0.45s, 0.25s apart, and its arrowhead (`::before`) appears after it; the icon of node i draws with the arrow leaving that node (i × 0.25s), parts 0.1s apart, 0.8s each (at most 1.2s per icon); section 10.1 |
-| Pinned bar | `.flow-keep`, `--change` | under a flow | "Member B keeps their GLO the whole time"; `--change` when ownership changes |
+| Pinned bar | `.flow-keep`, `--change` | under a flow | "Member B keeps their GLO the whole time"; neutral like `.flow__node` (`--gp-line` border, `--gp-surface` fill) with a solid `--gp-gold-mid` dot; `--change` when ownership changes: copper border and fill, the dot becomes a hollow ring (1.5px `--gp-warning` border, no fill) |
 | Cycle return | `.flow-return` with `--n`, `__label` | How GLO Works 03 | bracket from the last node back to the first; a text line on mobile; right after a `.flow[data-draw]` (How GLO Works 03) it draws after the last chain arrow: a curtain (`::after`) in the section color shrinks from right to left (0.9s, starting at `(n − 2) × 0.25s + 0.55s`), then the arrowhead appears; the label stays visible; CSS only, so only on a solid section background (not `.section--glow`); none at 768px and below |
 | Steps line | `ol.steps-line > li.steps-line__item`, `__label`, `__who`, `.is-you` | GLO 07 | numbered circles on a line; champagne circles for the member's own steps; `.steps-line[data-draw]` (GLO 07): on each visit the connecting lines (`::after`) open one after another, `scaleX` (`scaleY` from the top at 768px), 0.45s, 0.2s apart; the circles do not move |
 | Hub | `.hub[data-pulse="hub"]`, `__side--left/--right`, `__node`, `__name`, `__desc`, `__core.gia-core` | GLO 02 | three nodes per side, Gia in the center, pulse-diagram wiring; at 960px one column: Compute, Models, Tools, then Gia, then Agents, Research, Execution (replaces the wireframe's two compact columns) |
 | Accordion | `.accordion > details.acc`, `__sum`, `__icon`, `__body` | GLO 06 | native `details`; the same `name` on a group keeps one item open; open item has a gold border |
-| Ownership indicator | `.owner--keep`, `--change`, `--terms` | option cards, accordion, flows | always visible, never only in a tooltip |
+| Ownership indicator | `.owner--keep`, `--change`, `--terms` | option cards, accordion, flows | always visible, never only in a tooltip; `--keep`: gold (`--gp-gold-mid`) with a solid dot; `--change`: copper (`--gp-warning`) with a hollow ring (1.5px `currentColor` border, no fill), so it is never mistaken for gold; copper marks only a change of owner here |
 | Option card | `.options > article.option`, `__head`, `__name`, `__more`, `.option--conditional` | How GLO Works 04 | Use · Put it to work · Support · Transfer; details open on demand; conditional option has a dashed border |
 | Terms sheet | `.terms`, `__head`, `__title`, `__list`, `__row`, `__row--total`, `__note` | GC 02/03/07 | put inside `.glass` when it is Gia's interface; one total per project, always with an "Illustrative" badge |
 | Approval sheet | `[data-approval]`, `.approval__list/__item/__check/__label`, `[data-state]`, `__actions`, `__confirm`, `__msg`, `[data-approval-*]` | GC 04 | unreviewed terms show "Not reviewed"; Authorize refuses and names the open term; then an explicit confirmation; decline is a normal outcome; `data-log="#id"` writes to an activity history |
