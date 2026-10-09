@@ -117,7 +117,10 @@ srcset and width/height to use in the page. Photos already processed are skipped
   and legal teams: write the answer and remove `hidden`.
 - Final photos (originals in assets/source/, optimized WebP + JPEG fallback in two sizes in assets/images/):
   Global Connections: gc-hero-workspace-800/-1600; How GLO Works: hgw-choice-panel-800 (600x800) / -1448 (full size).
-  Introducing GLO final CTA: final-glo-800/-1600. The bar-chart tile on the panel is blurred (it could read as a
+  Introducing GLO final CTA: final-glo-800/-1600. Introducing GLO #what-glo-is (right of the text, 16:9): glo-resources-800/-1600.
+  Global Connections #deliverable and How GLO Works #three-layer: gc-deliverable-800/-1600 and hgw-direction-800/-1600,
+  full container width in `.media-frame--wide` (21:9, 16:9 at 768px and below); `--focus` on the figure keeps the man's
+  head and the open briefing (20% 50%), and both faces (44% 50%), in frame. The bar-chart tile on the panel is blurred (it could read as a
   growth chart, which the content rules forbid); the unblurred original is assets/source/final-glo-unblurred.png.
 - Hero of pages 2-4: full-screen media with the text on the side.
   Introducing GLO: assets/video/hero-glo.mp4 (8 s, no audio; original in assets/source/hero-glo-original.mp4),

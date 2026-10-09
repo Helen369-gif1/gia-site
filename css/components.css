@@ -164,6 +164,13 @@
 .media-frame__box > img, .media-frame__box > video, .media-frame__box > picture > img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .media-frame__box > picture { display: contents; }
 .media-frame figcaption { margin-top: 12px; }
+/* Wide photo across the container: 21:9, 16:9 at 768px and below. --focus on the figure sets object-position
+   (same idea as the page hero), so the subject stays in frame when the narrower ratio crops the sides. */
+.media-frame--wide .media-frame__box { aspect-ratio: 21 / 9; }
+.media-frame--wide .media-frame__box > picture > img { object-position: var(--focus, 50% 50%); }
+@media (max-width: 768px) { .media-frame--wide .media-frame__box { aspect-ratio: 16 / 9; } }
+/* .media-frame resets its margin; keep the shared heading-to-component distance when .gap-major is set. */
+.media-frame.gap-major { margin-top: clamp(64px, 7vw, 96px); }
 .media-frame--placeholder .media-frame__box {
   display: grid; place-items: center; padding: 24px; text-align: center;
   background: radial-gradient(ellipse at 70% 25%, rgba(241, 167, 77, .16), transparent 60%), var(--gp-surface-2);

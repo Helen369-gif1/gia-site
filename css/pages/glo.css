@@ -5,7 +5,8 @@
 .glo-note--left { margin-inline: 0; text-align: left; }
 
 /* ===== 03 What GLO is ===== */
-.glo-what { align-items: end; }
+.glo-what { align-items: center; }
+.glo-what__text { display: grid; gap: 24px; }
 .glo-what__body { display: grid; gap: 16px; max-width: 560px; }
 .glo-principle { margin-top: 56px; }
 
