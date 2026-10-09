@@ -547,4 +547,5 @@ svg.flow__icon { width: 24px; height: 24px; margin-top: 8px; margin-bottom: 14px
 @media (prefers-reduced-motion: reduce) {
   .msg-in, .log li.is-new { animation: none; }
   .acc, .tab { transition: none; }
+  .pulse-lines { transition: none; }
 }

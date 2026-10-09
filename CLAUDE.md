@@ -21,6 +21,8 @@ global-connections.html (Global Connections), how-glo-works.html (How GLO Works)
 - Videos never loop: use video[data-play-once] (plays once per visit to the screen),
   muted, no audio track, with poster (first frame) and data-still (last frame).
   Pages using it must load js/components.js after js/site.js.
+  Exception: the Meet Gia section 03 video (.breather__video) is driven by js/pages/meet-gia.js
+  with data-end-poster (last frame); it also plays once per visit, never loops.
 - Keep original media in assets/source/; optimized files in assets/video/ and assets/images/.
 - All site copy, code comments and docs are in English.
 - Content rules (GLO pages): no rate per GLO, no percentages or returns, no promises of income,

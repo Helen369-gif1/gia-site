@@ -278,7 +278,7 @@ Status labels are small mono text with a colored dot (`.status`). Mapping from t
 | Conditional or not yet available | dashed `--gp-line` border plus a "Coming next" status |
 | Handed off, declined, inactive | `--gp-text-muted` status |
 
-Every option (Use, Put it to work, Support, Transfer) carries a status badge on both Introducing GLO and How GLO Works; the drafts are all Coming next, Support is additionally shown as conditional (dashed). Capability availability uses four labels everywhere on the site: **Available now** (green), **With approval** (blue), **Coming next** (violet), **Vision** (muted). When in doubt, use the more conservative label. Final labels are confirmed by the product team.
+Every option (Use, Put it to work, Support, Transfer) carries a status badge on both Introducing GLO and How GLO Works; the drafts are all Coming next, Support is additionally shown as conditional (dashed). Capability availability uses four labels everywhere on the site: **Available now** (gold, `--gp-gold-mid`), **With approval** (blue), **Coming next** (violet), **Vision** (muted). When in doubt, use the more conservative label. Final labels are confirmed by the product team.
 
 ### 8.5 Media
 
@@ -529,7 +529,7 @@ Page slugs: `meet-gia`, `glo`, `global-connections`, `how-glo-works`. Each page 
 
 ### 14.2 Loading order
 
-Stylesheets: `tokens.css`, `base.css`, `components.css`, `shell.css`, then the page file. Scripts at the end of `body`: `site.js`, then `components.js` (pages 2–4, and any page using interactive components), then the page's own scripts. A page never loads another page's CSS or JS.
+Stylesheets: `tokens.css`, `base.css`, `components.css`, `shell.css`, then the page file. Scripts at the end of `body`: `site.js`, then `components.js` (all four pages), then the page's own scripts. A page never loads another page's CSS or JS.
 
 ### 14.3 Page sequence
 

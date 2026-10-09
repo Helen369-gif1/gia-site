@@ -64,7 +64,7 @@ Introducing GLO also links straight to How GLO Works from its options section, a
     tools/optimize-images.py   every new photo goes through it: moves the original to assets/source/, makes WebP + JPEG
                                versions (about 800 and 1600px, never upscaled) in assets/images/
 
-Every page loads tokens, base, components, shell and its own page CSS, then js/site.js and its own page script.
+Every page loads tokens, base, components, shell and its own page CSS, then js/site.js, js/components.js and its own page script.
 
 ## Site shell (header, mobile menu, footer)
 
