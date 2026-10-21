@@ -7,6 +7,7 @@ from the site folder (needs ffmpeg and ffprobe on PATH):
     python3 tools/optimize-images.py                         # all new photos in assets/images/
     python3 tools/optimize-images.py assets/images/photo.png # one file (also accepts a file in assets/source/)
     python3 tools/optimize-images.py photo.png --name final-photo
+    python3 tools/optimize-images.py photo.png --full-bleed  # also a 2400px version (full-width .vista band only)
     python3 tools/optimize-images.py --check                 # rebuild all photos in a temp folder, compare
                                                              # with the files in assets/images/, write nothing
 
@@ -16,6 +17,7 @@ For each photo the script:
          <name>-800.webp / .jpg     about 800px on the longer side
          <name>-1600.webp / .jpg    about 1600px on the longer side (or the original size if it is smaller;
                                     the suffix is then the real longer side, e.g. -1448)
+         <name>-2400.webp / .jpg    only with --full-bleed: about 2400px, for the full-width .vista band
      Quality: WebP 78, JPEG -q:v 4 (no visible loss at these sizes);
   3. prints the files, their sizes, the <picture> srcset values and width/height.
 
@@ -39,6 +41,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 IMAGES = ROOT / "assets" / "images"
 SOURCE = ROOT / "assets" / "source"
 SIZES = (800, 1600)  # longer side
+FULL_BLEED = 2400  # extra size with --full-bleed (the .vista band fills the viewport)
 WEBP_QUALITY = 78
 JPEG_QSCALE = 4  # ffmpeg -q:v, lower is better
 ORIGINAL_EXTS = {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".heic", ".avif"}
@@ -90,13 +93,17 @@ def adopt(src):
     return dest
 
 
-def build(src, name, out):
+def has_full_bleed(name):
+    return (IMAGES / f"{name}-{FULL_BLEED}.webp").exists()
+
+
+def build(src, name, out, full_bleed=False):
     """Write the versions of src to out. Returns the list of written files."""
     w, h = probe(src)
     longer = max(w, h)
     written = []
     srcset = {"webp": [], "jpg": []}
-    for target in SIZES:
+    for target in SIZES + ((FULL_BLEED,) if full_bleed else ()):
         side = min(target, longer)
         k = side / longer
         sw, sh = round(w * k / 2) * 2, round(h * k / 2) * 2
@@ -117,7 +124,7 @@ def build(src, name, out):
     return written
 
 
-def process(src, name, force):
+def process(src, name, force, full_bleed=False):
     if src.resolve().parent == IMAGES.resolve():
         if is_processed(name) and not force:
             print(f"{src.relative_to(ROOT)}: {name} is already processed, skipped (the file stays where it is)")
@@ -127,7 +134,7 @@ def process(src, name, force):
         print(f"{name}: already processed, skipped (use --force to rebuild)")
         return
     print(f"{name}  (from {src.relative_to(ROOT) if src.is_relative_to(ROOT) else src})")
-    build(src, name, IMAGES)
+    build(src, name, IMAGES, full_bleed)
 
 
 def check():
@@ -139,7 +146,7 @@ def check():
     bad = 0
     with tempfile.TemporaryDirectory() as tmp:
         for src, name in pairs:
-            for f in build(src, name, pathlib.Path(tmp)):
+            for f in build(src, name, pathlib.Path(tmp), has_full_bleed(name)):
                 ref = IMAGES / f.name
                 same = ref.exists() and filecmp.cmp(f, ref, shallow=False)
                 bad += not same
@@ -152,6 +159,8 @@ def main():
     ap.add_argument("source", nargs="?", help="one original (default: every new photo in assets/images/)")
     ap.add_argument("--name", help="output base name (default: the source file name)")
     ap.add_argument("--force", action="store_true", help="rebuild the versions of an already processed photo")
+    ap.add_argument("--full-bleed", action="store_true",
+                    help=f"also write a {FULL_BLEED}px version (full-width .vista band only)")
     ap.add_argument("--check", action="store_true", help="rebuild in a temp folder and compare, write nothing")
     args = ap.parse_args()
 
@@ -161,7 +170,7 @@ def main():
         src = pathlib.Path(args.source).resolve()
         if not src.is_file():
             sys.exit(f"not found: {args.source}")
-        process(src, args.name or src.stem, args.force)
+        process(src, args.name or src.stem, args.force, args.full_bleed)
         return
     if args.name:
         sys.exit("--name needs a source file")
@@ -169,7 +178,7 @@ def main():
     if not new:
         print("no new photos in assets/images/")
     for src in new:
-        process(src, src.stem, args.force)
+        process(src, src.stem, args.force, args.full_bleed)
 
 
 if __name__ == "__main__":

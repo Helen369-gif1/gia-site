@@ -220,6 +220,20 @@
 .card__art:not(:has(svg, img)) { display: none; }
 @media (max-width: 560px) { .card__art { height: 72px; } }
 
+/* ===== Card photo (optional, first child of a card; DS 8.1) =====
+   figure.media-frame.card__photo with --ratio inline; 8px radius, 1px border, photo fills it (object-fit: cover,
+   --focus sets object-position per photo). Parallax: data-parallax on the box, except inside product UI glass.
+   --art: the same slot holding a large line drawing (svg.draw-icon) instead of a photo. */
+.card__photo { margin: 0 0 8px; }
+.card__photo .media-frame__box { border-radius: 8px; }
+.card__photo .media-frame__box > picture > img { object-position: var(--focus, 50% 50%); }
+.card__photo--art .media-frame__box {
+  display: grid; place-items: center; color: var(--gp-gold);
+  background: radial-gradient(ellipse at 50% 50%, rgba(241, 167, 77, .12), transparent 65%), var(--gp-surface-2);
+}
+.card__photo--art svg { display: block; width: 64px; height: 64px; overflow: visible; }
+.card__photo.media-frame--placeholder .media-frame__box { padding: 12px; }
+
 /* ===== Flow: boxes joined by arrows (left to right; top to bottom at 768px and below) ===== */
 .flow { --flow-gap: 36px; list-style: none; margin: 0; padding: 0; display: flex; gap: var(--flow-gap); counter-reset: flow; }
 .flow__node {
@@ -449,6 +463,40 @@ svg.flow__icon { width: 24px; height: 24px; margin-top: 8px; margin-bottom: 14px
 .notice__list li { position: relative; padding-left: 20px; font-size: 15px; line-height: 1.55; color: var(--gp-text-2); }
 .notice__list li::before { content: ""; position: absolute; left: 0; top: .75em; width: 8px; height: 1px; background: var(--gp-gold-mid); }
 @media (max-width: 560px) { .notice { padding: 24px; } }
+
+/* ===== Vista: full-width photo breather between two sections (DS 7.5) =====
+   The band clips (clip-path) a photo fixed to the viewport, so the photo stays still while the section above
+   slides up off it and the next section covers it again; the photo never moves or scales. --vista-from is the
+   color of the section above (default --gp-black), --vista-tint the even darkening (raise it on one band only if
+   its line falls below 3:1). Gradient and tint keep the champagne line at 3:1 or more against the brightest pixel
+   behind it (1440x900 and 390x844); the lower third of the photo stays untouched. js/components.js sets the photo's srcset about one viewport ahead (data-srcset);
+   a <noscript> copy shows it without JS. Reduced motion: an ordinary static photo inside the band. */
+.vista {
+  --vista-from: var(--gp-black); --vista-tint: .15;
+  position: relative; height: 100vh; clip-path: inset(0);
+  display: grid; align-content: start; justify-items: center; background: var(--vista-from);
+}
+.vista__media img { position: fixed; inset: 0; width: 100%; height: 100lvh; object-fit: cover; object-position: 50% 50%; }
+/* At a fractional scroll offset the clip of the fixed photo rounds outward while the overlay rounds inward, so one
+   bright row of the photo would show at the band's edge. The band overlaps both neighbours by 2px and they paint
+   over it, each with its own background color set explicitly (plain sections are otherwise transparent). */
+.vista { margin-block: -2px; }
+.section:has(+ .vista), .vista + .section { z-index: 1; background-color: var(--section-bg, var(--gp-bg)); }
+.vista::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(to bottom, var(--vista-from) 0%, color-mix(in srgb, var(--vista-from) 55%, transparent) 22%,
+      color-mix(in srgb, var(--vista-from) 50%, transparent) 46%, transparent 66%),
+    rgba(5, 4, 2, var(--vista-tint));
+}
+.vista__line {
+  position: relative; z-index: 1; margin: 0; padding: 28vh var(--page-pad) 0; max-width: 20ch; box-sizing: content-box;
+  font-family: var(--font-display); font-size: clamp(32px, 4.4vw, 62px); font-weight: 600; line-height: 1.08;
+  letter-spacing: -0.01em; color: var(--gp-champagne); text-align: center; text-wrap: balance;
+  text-shadow: 0 1px 24px rgba(0, 0, 0, .45);
+}
+@media (max-width: 768px) { .vista { height: 70vh; } .vista__line { padding-top: 22vh; } }
+@media (prefers-reduced-motion: reduce) { .vista__media img { position: absolute; height: 100%; } }
 
 /* ===== Quiet effects (DS 10.1), switched on by js/components.js =====
    Every hiding start state needs a class the script adds (.stagger-on, .draw-on) and sits inside

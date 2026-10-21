@@ -20,6 +20,12 @@
      Under reduced motion it never plays; data-still (an image of the last frame) replaces the
      poster so the complete composition is shown.
 
+   Vista photo  .vista [data-vista]   (full-width breather band, design system 7.5)
+     The photo is fixed to the viewport, so the browser's own lazy loading would load it at once. Its <source>
+     and <img> carry data-srcset (and data-src) instead; the real attributes are set when the band comes within
+     about one viewport of the screen. A <noscript> copy in the band shows the photo without JS. Under reduced
+     motion the photo is static inside the band and the attributes are set at once (native lazy loading applies).
+
    Pulse diagram  [data-pulse="<name>"]   (hub on Introducing GLO, ecosystem on How GLO Works)
      One absolutely positioned SVG draws the wiring between the cards and Gia (.gia-core), measured from
      getBoundingClientRect and redrawn by a ResizeObserver. A diagram definition, registered with
@@ -180,6 +186,22 @@
         }
       });
     }, { threshold: 0.5 }).observe(v);
+  });
+
+  /* ---------- Vista photo ---------- */
+  const vistaLoad = (pic) => {
+    pic.querySelectorAll('[data-srcset]').forEach((el) => { el.srcset = el.dataset.srcset; el.removeAttribute('data-srcset'); });
+    pic.querySelectorAll('img[data-src]').forEach((el) => { el.src = el.dataset.src; el.removeAttribute('data-src'); });
+  };
+  const vistaObs = !reduce && 'IntersectionObserver' in window && new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      if (!en.isIntersecting) return;
+      vistaObs.unobserve(en.target);
+      vistaLoad(en.target.querySelector('[data-vista]'));
+    });
+  }, { rootMargin: '100% 0px' });
+  document.querySelectorAll('[data-vista]').forEach((pic) => {
+    if (vistaObs) vistaObs.observe(pic.closest('.vista')); else vistaLoad(pic);
   });
 
   /* ---------- Quiet effects ---------- */
