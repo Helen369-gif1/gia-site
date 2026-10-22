@@ -1,5 +1,5 @@
 /* Meet Gia (index.html) — page script. Needs js/site.js and js/pages/meet-gia-frames.js loaded first.
-   Hero scroll video, section 03 video, In action states, Memory, permission, work approval, waitlist. */
+   Hero scroll video, section 03 video, persona cards, In action states, Memory, permission, work approval, waitlist. */
 (() => {
   const { reduce, clamp, lerp } = window.GiaSite;
 
@@ -193,6 +193,71 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
   if (!reduce) { current = target = heroProgress(); captions(current); }
+
+  /* ---------- 03 How people use Gia: expanding cards, photo / interface swap ----------
+     Above 1100px: pointer over a card or keyboard focus opens it (.is-open: 2/3 of the row) and shows Gia's screen;
+     leaving the row closes it. A click, Enter or Space swaps photo and screen in the open card (on a touch screen the
+     first tap opens it). At 1100px and below: a tap swaps photo and screen in place. Reduced motion: CSS has no
+     transitions, so every change is instant. */
+  const people = document.querySelector('.personas');
+  if (people) {
+    const cards = [...people.querySelectorAll('.persona')];
+    const wide = window.matchMedia('(min-width: 1101px)');
+    let open = -1;
+    const show = (card, screen) => {
+      const f = card.querySelector('.persona__frame');
+      f.classList.toggle('is-screen', screen);
+      f.querySelector('.persona__photo').setAttribute('aria-hidden', String(screen));
+      f.querySelector('.persona__screen').setAttribute('aria-hidden', String(!screen));
+      f.querySelector('.persona__note').setAttribute('aria-hidden', String(!screen));
+    };
+    const setOpen = (i) => {
+      if (i === open) return;
+      open = i;
+      people.classList.toggle('has-open', i >= 0);
+      cards.forEach((c, k) => { c.classList.toggle('is-open', k === i); show(c, k === i); });
+    };
+    const focused = () => { const f = people.querySelector(':focus-visible'); return f ? cards.indexOf(f.closest('.persona')) : -1; };
+
+    cards.forEach((card, i) => {
+      const frame = card.querySelector('.persona__frame');
+      card.addEventListener('pointerenter', (e) => { if (wide.matches && e.pointerType !== 'touch') setOpen(i); });
+      frame.addEventListener('focus', () => { if (wide.matches && frame.matches(':focus-visible')) setOpen(i); });
+      frame.addEventListener('click', () => {
+        if (wide.matches && open !== i) { setOpen(i); return; }
+        show(card, !frame.classList.contains('is-screen'));
+      });
+    });
+    people.addEventListener('pointerleave', (e) => { if (wide.matches && e.pointerType !== 'touch') setOpen(focused()); });
+    people.addEventListener('focusout', (e) => {
+      if (wide.matches && !people.contains(e.relatedTarget) && !people.matches(':hover')) setOpen(-1);
+    });
+    document.addEventListener('pointerdown', (e) => { if (wide.matches && e.pointerType === 'touch' && !people.contains(e.target)) setOpen(-1); });
+
+    // Reserve the tallest text block: title at the narrow (1/6) width, tag and body at the equal (1/3) width.
+    const sizer = document.createElement('div');
+    sizer.className = 'personas__sizer';
+    sizer.setAttribute('aria-hidden', 'true');
+    people.after(sizer);
+    const measure = () => {
+      if (!wide.matches) { people.style.removeProperty('--people-text-h'); return; }
+      const unit = (people.clientWidth - 2 * parseFloat(getComputedStyle(people).columnGap)) / 6;
+      sizer.style.width = `${unit * 2}px`;
+      let h = 0;
+      cards.forEach((c) => {
+        sizer.innerHTML = c.querySelector('.persona__body').outerHTML;
+        sizer.querySelector('h3').style.width = `${unit}px`;
+        h = Math.max(h, sizer.firstElementChild.offsetHeight);
+      });
+      sizer.textContent = '';
+      people.style.setProperty('--people-text-h', `${Math.ceil(h)}px`);
+    };
+    let measureRaf = 0;
+    window.addEventListener('resize', () => { cancelAnimationFrame(measureRaf); measureRaf = requestAnimationFrame(measure); }, { passive: true });
+    if (document.fonts) document.fonts.ready.then(measure);
+    measure();
+    wide.addEventListener('change', () => { open = -2; setOpen(-1); measure(); });
+  }
 
   /* ---------- 04 In action: state machine ---------- */
   const phoneBody = document.getElementById('phone-body');

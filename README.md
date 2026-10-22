@@ -10,7 +10,7 @@ Static HTML/CSS/JS, no build step. Open `index.html` in a browser, or serve the 
     02  How it works                       #how        (asymmetric: 01 conversation left, 02 research and 03 review right;
                                                        cards appear 01 -> 02 -> 03, js/pages/meet-gia.js)
     03  A Gia that works with you          #with-you   (short breather, 40/60 text + video that plays once)
-    04  How people use Gia                 #people
+    04  How people use Gia                 #people     (expanding persona cards above 1100px, photo / interface swap; js/pages/meet-gia.js)
     05  See Gia in action                  #in-action
     06  She gets to know you (Memory)      #memory
     07  Control, privacy & limits          #control
@@ -47,7 +47,7 @@ Introducing GLO also links straight to How GLO Works from its options section, a
                                [data-draw], [data-shine]; card art (.card__art) and small line icons (svg.draw-icon)
                                draw themselves (design system 9.2 and 10.1; demos in docs/components.html)
     js/site.js                 shared shell: menu, scroll progress, active section, reveal; exposes window.GiaSite
-    js/pages/meet-gia.js       Meet Gia: hero scroll video, How it works card sequence, section 03 video, In action, Memory, permissions, approval, waitlist
+    js/pages/meet-gia.js       Meet Gia: hero scroll video, How it works card sequence, section 03 video, persona cards (#people), In action, Memory, permissions, approval, waitlist
     js/pages/meet-gia-frames.js  list of Meet Gia hero video frames
     js/pages/<page>.js         page scripts for the other pages (how-glo-works.js: the ecosystem pulse diagram)
     assets/logo/               Glonari mark, horizontal and stacked lockups, favicons
@@ -126,6 +126,12 @@ srcset and width/height to use in the page. Photos already processed are skipped
 - Meet Gia #memory photos: one per tab at the top of the panel's left column (`.mem__main`), mem-builder, mem-pro,
   mem-parent, mem-talk (800/1600, WebP + JPEG; originals in assets/source/). All four are in the markup, stacked; the tab
   handler in js/pages/meet-gia.js crossfades to the tab's photo. Fixed min-heights keep the panel from jumping between tabs.
+- Meet Gia #people interface screens (product samples from the brochure, used unchanged; originals PNG 1670x942 in
+  assets/source/): ui-pulse (busy professional, daily briefing), ui-home (future builder, Glonari Home),
+  ui-connect (thinker & explorer, Global Connections), 800/1600 WebP + JPEG at the default quality. They show
+  illustrative figures, an approved exception to the content rules (design system section 15): the caption
+  "Interface preview. Figures are illustrative." always shows with them. Person photos: busy-professional,
+  couple-comparing-homes, quiet-moment. No parallax on these frames (they expand on hover; design system 9.3).
 - Meet Gia #how neighborhood photos: hiw-riverside, hiw-maple-heights, hiw-old-town (800px versions, card 02 only; card 03 has no photos).
 - Photo breathers (shared `.vista`, design system 7.5): one full-width photo band per page with one champagne line,
   curtain reveal (photo fixed in a clip-path band). vista-meet-gia (index.html, #control -> #work), vista-glo
